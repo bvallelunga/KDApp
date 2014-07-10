@@ -1,0 +1,36 @@
+{
+  "name": "kdapp",
+  "description": "KDApp is the Koding app store cli.",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "commander": "2.2.0"
+  },
+  "keywords": [
+        "cli",
+        "kdapp",
+        "koding",
+        "koding/kdapp"
+  ],
+  "preferGlobal": true,
+  "main": "./index.coffee",
+  "bin": "./index.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bvallelunga/KDApp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bvallelunga/KDApp/issues"
+  },
+  "engines": {
+    "node": "<= 0.10.7"
+  },
+  "engineStrict": "true",
+  "contributors": [
+        {
+            "name": "Brian Vallelunga",
+            "email": "vallelungabrian@gmail.com",
+            "url": "http://about.me/bvallelunga"
+        }
+    ]
+}
