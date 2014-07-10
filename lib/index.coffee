@@ -23,7 +23,7 @@ class Lib
     tempApp   = "/tmp/#{appCap}.kdapp"
     destApp   = "#{@path}/#{appCap}.kdapp"
     
-    fs.copy "#{@root}/Skeleton.kdapp", tempApp, (err)=>
+    fs.copy "#{@root}/skeleton", tempApp, (err)=>
       unless err
         applause = Applause.create
           variables:
