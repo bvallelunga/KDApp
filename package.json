@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "commander": "2.2.0"
+    "commander": "2.2.0",
+    "fs-extra": "0.10.0",
+    "applause": "0.3.3"
   },
   "keywords": [
         "cli",
