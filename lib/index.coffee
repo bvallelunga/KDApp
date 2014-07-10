@@ -3,23 +3,25 @@ path      = require 'path'
 Applause  = require 'applause'
 kdc       = require './kdc'
 
-util = require('util');
-
 class Lib
   constructor: (program) ->
     @program = program
     @path    = process.env.PWD
     @user    = process.env.LOGNAME
     @root    = path.resolve __dirname, '..'
+    
+  capitalize: (string)->
+    return (string.split(' ').map (word) -> 
+      word[0].toUpperCase() + word[1..-1].toLowerCase()
+    ).join ' '
   
   create: (app, options) ->
     return @help() unless app
-    return console.log "App name can not contain spaces" if " " in app
     
     appLower  = app.toLowerCase()
-    appCap    = app[0].toUpperCase() + app[1..-1].toLowerCase()
+    appCap    = @capitalize app
     userLower = @user.toLowerCase()
-    userCap   = @user[0].toUpperCase() + @user[1..-1].toLowerCase()
+    userCap   = @capitalize @user
     tempApp   = "/tmp/#{appCap}.kdapp"
     destApp   = "#{@path}/#{appCap}.kdapp"
     
