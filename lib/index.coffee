@@ -1,7 +1,8 @@
 fs        = require 'fs-extra'
 path      = require 'path'
 Applause  = require 'applause'
-kdc       = require './kdc'
+coffee    = require './coffee'
+less      = require './less'
 
 class Lib
   constructor: (program) ->
@@ -56,11 +57,24 @@ class Lib
         console.log "Failed to create #{appCap}.kdapp"
   
   compile: (type)=>
+    manifestPath = "#{@path}/manifest.json"
+
+    try
+      manifest = JSON.parse fs.readFileSync manifestPath
+    catch error
+      if error.errno is 34
+        console.log "Manifest file does not exists: #{manifestPath}"
+      else
+        console.log "Manifest file seems corrupted: #{manifestPath}"
+      process.exit error.errno or 3
+    
     if type
       switch type
-        when "coffee" then kdc @path
+        when "coffee" then coffee manifest, @path
+        when "less" then less manifest, @path, true
     else 
-      kdc @path
+      coffee manifest, @path
+      less manifest, @path
   
   publish: console.log
   serve: console.log

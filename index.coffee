@@ -20,7 +20,7 @@ program
 
 program 
   .command 'compile [type]'
-  .description 'Compile specific assest: coffee, less, sass, stylus'
+  .description 'Compile specific assest: coffee, less'
   .action lib.compile.bind lib
   
 program 
