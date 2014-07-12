@@ -6,7 +6,7 @@ class @@acMainView extends KDView
 
   viewAppended:->
     @addSubView new KDView
-      partial  : "Welcome to @@ac app!"
+      partial  : "Welcome to @@a app!"
       cssClass : "welcome-view"
 
 class @@acController extends AppController

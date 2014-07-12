@@ -40,7 +40,7 @@ class Lib
     appCap    = @nameify @capitalize app
     userLower = @user.toLowerCase()
     userCap   = @capitalize @user
-    skelApp   = "#{@root}/kdapps/Skeleton.kdapp"
+    skelApp   = "#{@root}/apps/Skeleton.kdapp"
     tempApp   = "/tmp/#{appCap}.kdapp"
     destApp   = "#{@path}/#{appCap}.kdapp"
     
@@ -90,7 +90,8 @@ class Lib
     manifest  = @getManifest()
     webFolder = "/home/#{@user}/Web"
     appFolder = "#{webFolder}/#{manifest.name}.kdapp"
-
+    @compile()
+    
     Exec.exec """
       mkdir -p #{webFolder}
       mkdir -p #{appFolder}
@@ -99,8 +100,9 @@ class Lib
     """, (err)->
       unless err
         message = """
-          starting app server...
-          listening on https://koding.com/bvallelunga/Apps/Preview?app=#{manifest.name}
+          
+          Starting app server...
+          Listening on https://koding.com/bvallelunga/Apps/Preview?app=#{manifest.name}
           
           ctrl-c to stop the server
           
