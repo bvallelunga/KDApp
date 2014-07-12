@@ -24,25 +24,26 @@ module.exports = (manifest, appPath, force)->
   parser = new(less.Parser)
     paths: [appPath, "#{appPath}/resources"]
   
-  async.reduce files.less, "", (css, file, callback)-> 
-    file = path.normalize (path.join appPath, file) if appPath
-    
-    if /\.less/.test file
-      if fs.existsSync file
-        contents = fs.readFileSync file, 'utf-8'
-        
-        parser.parse contents, (err, tree)->
-          compiledCss = tree.toCSS()
+  if files.less and files.less.length not 0
+    async.reduce files.less, "", (css, file, callback)-> 
+      file = path.normalize (path.join appPath, file) if appPath
+      
+      if /\.less/.test file
+        if fs.existsSync file
+          contents = fs.readFileSync file, 'utf-8'
           
-          if !err and "" not in [compiledCss, contents]
-            callback null, css + compiledCss
-          else
-            callback "Failed to compile #{file}"
+          parser.parse contents, (err, tree)->
+            compiledCss = tree.toCSS()
             
-      else if force
-        callback "The required file not found: #{file}"
-  , (err, css)->
-    unless err
-      fs.writeFileSync path.normalize(path.join appPath, files.stylesheets[0]), css
-    else
-      console.log err if force
+            if !err and "" not in [compiledCss, contents]
+              callback null, css + compiledCss
+            else
+              callback "Failed to compile #{file}"
+              
+        else if force
+          callback "The required file not found: #{file}"
+    , (err, css)->
+      unless err
+        fs.writeFileSync path.normalize(path.join appPath, files.stylesheets[0]), css
+      else
+        console.log err if force

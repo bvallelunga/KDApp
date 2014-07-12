@@ -3,6 +3,7 @@ path      = require 'path'
 Applause  = require 'applause'
 coffee    = require './coffee'
 less      = require './less'
+Exec      = require('child_process');
 
 class Lib
   constructor: (program) ->
@@ -18,7 +19,19 @@ class Lib
     
   nameify: (string)->
     return string.replace(' ', '')
-  
+    
+  getManifest: ->
+    manifestPath = "#{@path}/manifest.json"
+
+    try
+      return JSON.parse fs.readFileSync manifestPath
+    catch error
+      if error.errno is 34
+        console.log "Manifest file does not exists: #{manifestPath}"
+      else
+        console.log "Manifest file seems corrupted: #{manifestPath}"
+      process.exit error.errno or 3
+      
   create: (app, options) ->
     return @help() unless app
     
@@ -41,7 +54,6 @@ class Lib
             'u' : @user
             'ul': userLower
             'uc': userCap
-            'p' : destApp
         
         files = [
           "ChangeLog", "README.md", "index.coffee", 
@@ -62,16 +74,7 @@ class Lib
         console.log "Failed to create #{appCap}.kdapp"
   
   compile: (type)=>
-    manifestPath = "#{@path}/manifest.json"
-
-    try
-      manifest = JSON.parse fs.readFileSync manifestPath
-    catch error
-      if error.errno is 34
-        console.log "Manifest file does not exists: #{manifestPath}"
-      else
-        console.log "Manifest file seems corrupted: #{manifestPath}"
-      process.exit error.errno or 3
+    manifest = @getManifest()
     
     if type
       switch type
@@ -82,7 +85,41 @@ class Lib
       less manifest, @path
   
   publish: console.log
-  serve: console.log
+  
+  serve: (options)->
+    manifest  = @getManifest()
+    webFolder = "/home/#{@user}/Web"
+    appFolder = "#{webFolder}/#{manifest.name}.kdapp"
+
+    Exec.exec """
+      mkdir -p #{webFolder}
+      mkdir -p #{appFolder}
+      ln -s --force #{@path}/index.js #{appFolder}/index.js
+      ln -s --force #{@path}/resources/style.css #{appFolder}/style.css
+    """, (err)->
+      unless err
+        message = """
+          starting app server...
+          listening on https://koding.com/bvallelunga/Apps/Preview?app=#{manifest.name}
+          
+          ctrl-c to stop the server
+          
+        """
+        
+        stdin = process.stdin
+        stdin.setRawMode true
+        stdin.resume()
+        stdin.setEncoding( 'utf8' );
+        
+        stdin.on 'data', (key)->
+          if key is '\u0003'
+            Exec.exec "rm -r --force #{appFolder}", process.exit
+          process.stdout.write key
+
+      else
+        message = "Failed to start app server"
+      
+      console.log message
   
   help: ()->
     @program.help()

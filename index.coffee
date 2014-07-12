@@ -25,7 +25,6 @@ program
   
 program 
   .command 'serve'
-  .option '-p, --port', 'Port for web server (default: 4000)', 4000
   .option '-a, --autoreload', 'Enable app refresh on file changes (default: true)'
   .option '-n, --no-autoreload', 'Disable app refresh on file changes'
   .description 'Serves the application on a local web server'
@@ -40,6 +39,6 @@ program
   .command 'help'
   .description 'Output help information'
   .action lib.help.bind lib
-
+  
 program.parse process.argv
 program.help() unless program.args.length
