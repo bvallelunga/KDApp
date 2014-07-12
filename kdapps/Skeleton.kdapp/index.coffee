@@ -14,7 +14,7 @@ class @@acController extends AppController
   constructor:(options = {}, data)->
     options.view    = new @@acMainView
     options.appInfo =
-      name : "@@ac"
+      name : "@@a"
       type : "application"
 
     super options, data

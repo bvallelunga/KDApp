@@ -15,18 +15,23 @@ class Lib
     return (string.split(' ').map (word) -> 
       word[0].toUpperCase() + word[1..-1].toLowerCase()
     ).join ' '
+    
+  nameify: (string)->
+    return string.replace(' ', '')
   
   create: (app, options) ->
     return @help() unless app
     
-    appLower  = app.toLowerCase()
-    appCap    = @capitalize app
+    app       = @capitalize app
+    appLower  = @nameify app.toLowerCase()
+    appCap    = @nameify @capitalize app
     userLower = @user.toLowerCase()
     userCap   = @capitalize @user
+    skelApp   = "#{@root}/kdapps/Skeleton.kdapp"
     tempApp   = "/tmp/#{appCap}.kdapp"
     destApp   = "#{@path}/#{appCap}.kdapp"
     
-    fs.copy "#{@root}/skeleton", tempApp, (err)=>
+    fs.copy skelApp, tempApp, (err)=>
       unless err
         applause = Applause.create
           variables:
