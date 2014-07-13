@@ -25,10 +25,6 @@ do ->
   if appView?
     view = new @@acMainView
     appView.addSubView view
-    
-  else if appPreview?
-    view = new @@acMainView
-    appPreview.addSubView view
 
   else
     KD.registerAppClass @@acController,

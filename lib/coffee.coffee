@@ -84,6 +84,9 @@ module.exports = (manifest, appPath)->
   /* Compiled by kdc on #{(new Date()).toString()} */
   (function() {
   /* KDAPP STARTS */
+  if (typeof window.appPreview !== "undefined" && window.appPreview !== null) {
+    var appView = window.appPreview
+  }
   #{source}
   /* KDAPP ENDS */
   }).call();
