@@ -1,7 +1,5 @@
-Applause  = require 'applause'
-Exec      = require('child_process');
 fs        = require 'fs-extra'
-path      = require 'path'
+exec      = require('child_process').exec
 
 class Serve
   constructor: (manifest, user, path) ->
@@ -12,7 +10,7 @@ class Serve
     @appFolder = "#{@webFolder}/#{manifest.name}.kdapp"
     
   start: ->
-    Exec.exec """
+    exec """
       mkdir -p #{@webFolder}
       mkdir -p #{@appFolder}
       ln -s --force #{@path}/index.js #{@appFolder}/index.js
@@ -35,7 +33,7 @@ class Serve
         
         stdin.on 'data', (key)=>
           if key is '\u0003'
-            Exec.exec "rm -r --force #{@appFolder}", process.exit
+            exec "rm -r --force #{@appFolder}", process.exit
           process.stdout.write key
 
       else

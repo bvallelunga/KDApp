@@ -3,6 +3,7 @@ path      = require 'path'
 Coffee    = require './coffee'
 Less      = require './less'
 Serve     = require './serve'
+Create    = require './create'
 
 class Lib
   constructor: (program) ->
@@ -10,14 +11,6 @@ class Lib
     @path    = process.env.PWD
     @user    = process.env.LOGNAME
     @root    = path.resolve __dirname, '..'
-    
-  capitalize: (string)->
-    return (string.split(' ').map (word) -> 
-      word[0].toUpperCase() + word[1..-1].toLowerCase()
-    ).join ' '
-    
-  nameify: (string)->
-    return string.replace(' ', '')
     
   getManifest: ->
     manifestPath = "#{@path}/manifest.json"
@@ -34,43 +27,8 @@ class Lib
   create: (app, options) ->
     return @help() unless app
     
-    app       = @capitalize app
-    appLower  = @nameify app.toLowerCase()
-    appCap    = @nameify @capitalize app
-    userLower = @user.toLowerCase()
-    userCap   = @capitalize @user
-    skelApp   = "#{@root}/apps/Skeleton.kdapp"
-    tempApp   = "/tmp/#{appCap}.kdapp"
-    destApp   = "#{@path}/#{appCap}.kdapp"
-    
-    fs.copy skelApp, tempApp, (err)=>
-      unless err
-        applause = Applause.create
-          variables:
-            'a' : app
-            'al': appLower
-            'ac': appCap
-            'u' : @user
-            'ul': userLower
-            'uc': userCap
-        
-        files = [
-          "ChangeLog", "README.md", "index.coffee", 
-          "manifest.json", "resources/style.css"
-        ]
-        
-        for file in files
-          contents = fs.readFileSync "#{tempApp}/#{file}", 'utf8'
-          result = applause.replace contents
-          fs.writeFileSync "#{tempApp}/#{file}", result
-          
-        fs.move tempApp, destApp, (err)->
-          if err
-            fs.removeSync tempApp
-            console.log "Failed to create #{appCap}.kdapp"
-          
-      else
-        console.log "Failed to create #{appCap}.kdapp"
+    create = new Create @user, app, @path, @root
+    create.app()
   
   compile: (type)=>
     manifest = @getManifest()
