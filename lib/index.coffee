@@ -1,9 +1,8 @@
 fs        = require 'fs-extra'
 path      = require 'path'
-Applause  = require 'applause'
-coffee    = require './coffee'
-less      = require './less'
-Exec      = require('child_process');
+Coffee    = require './coffee'
+Less      = require './less'
+Serve     = require './serve'
 
 class Lib
   constructor: (program) ->
@@ -78,50 +77,21 @@ class Lib
     
     if type
       switch type
-        when "coffee" then coffee manifest, @path
-        when "less" then less manifest, @path, true
+        when "coffee" then Coffee manifest, @path
+        when "less" then Less manifest, @path, true
     else 
-      coffee manifest, @path
-      less manifest, @path
+      Coffee manifest, @path
+      Less manifest, @path
   
   publish: console.log
   
   serve: (options)->
     manifest  = @getManifest()
-    webFolder = "/home/#{@user}/Web"
-    appFolder = "#{webFolder}/#{manifest.name}.kdapp"
-    @compile()
+    serve     = new Serve manifest, @user, @path
     
-    Exec.exec """
-      mkdir -p #{webFolder}
-      mkdir -p #{appFolder}
-      ln -s --force #{@path}/index.js #{appFolder}/index.js
-      ln -s --force #{@path}/resources/style.css #{appFolder}/style.css
-    """, (err)->
-      unless err
-        message = """
-          
-          Starting app server...
-          Listening on https://koding.com/bvallelunga/Apps/Preview?app=#{manifest.name}
-          
-          ctrl-c to stop the server
-          
-        """
-        
-        stdin = process.stdin
-        stdin.setRawMode true
-        stdin.resume()
-        stdin.setEncoding( 'utf8' );
-        
-        stdin.on 'data', (key)->
-          if key is '\u0003'
-            Exec.exec "rm -r --force #{appFolder}", process.exit
-          process.stdout.write key
-
-      else
-        message = "Failed to start app server"
-      
-      console.log message
+    @compile()
+    serve.start()
+    
   
   help: ()->
     @program.help()
