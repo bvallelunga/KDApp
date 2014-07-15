@@ -30,7 +30,7 @@ class Lib
     create = new Create @user, app, @path, @root
     create.app()
   
-  compile: (type)=>
+  compile: (type)->
     manifest = @getManifest()
     
     if type
@@ -44,12 +44,13 @@ class Lib
   publish: console.log
   
   serve: (options)->
-    manifest  = @getManifest()
-    serve     = new Serve manifest, @user, @path
+    manifest = @getManifest()
+    serve    = new Serve manifest, @user, @path
     
     @compile()
-    serve.start()
-    
+    serve.start =>
+      serve.watch() if options.watch
+      serve.on "compile", @compile.bind @ 
   
   help: ()->
     @program.help()

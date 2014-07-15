@@ -92,4 +92,4 @@ module.exports = (manifest, appPath)->
   }).call();
   """
   fs.writeFileSync (path.join appPath, "index.js"), mainSource
-  console.log "Compiled successfully."
+  console.log "Compiled successfully"

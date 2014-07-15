@@ -25,8 +25,8 @@ program
   
 program 
   .command 'serve'
-  .option '-a, --autoreload', 'Enable app refresh on file changes (default: true)'
-  .option '-n, --no-autoreload', 'Disable app refresh on file changes'
+  .option '-a, --watch', 'Enable watching for file changes and then compile (default: true)'
+  .option '-n, --no-watch', 'Disable watching for file changes'
   .description 'Serves the application on a local web server'
   .action lib.serve.bind lib
   

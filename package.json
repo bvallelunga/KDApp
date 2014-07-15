@@ -8,7 +8,8 @@
     "fs-extra": "0.10.0",
     "async": "0.9.0",
     "applause": "0.3.3",
-    "less": "1.7.3"
+    "less": "1.7.3",
+    "node-watch": "0.3.4"
   },
   "keywords": [
         "cli",
