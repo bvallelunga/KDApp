@@ -6,5 +6,5 @@ init:
 build:
 	coffee --output lib --compile src
 
-publish: dist
+publish:
 	npm publish

@@ -2,7 +2,7 @@
   "name": "kdapp",
   "description": "KDApp is the Koding app store cli.",
   "author": "Brian Vallelunga <vallelungabrian@gmail.com>",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "production": false, 
   "dependencies": {
