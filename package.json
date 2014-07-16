@@ -20,8 +20,8 @@
         "koding/kdapp"
   ],
   "preferGlobal": true,
-  "main": "lib/index.js",
-  "bin": "lib/index.js",
+  "main": "./index.coffee",
+  "bin": "./index.coffee",
   "repository": {
     "type": "git",
     "url": "https://github.com/bvallelunga/KDApp.git"
