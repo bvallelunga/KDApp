@@ -1,5 +1,6 @@
 fs        = require 'fs-extra'
 path      = require 'path'
+config    = require '../package'
 Coffee    = require './coffee'
 Less      = require './less'
 Serve     = require './serve'
@@ -11,6 +12,11 @@ class Lib
     @path    = process.env.PWD
     @user    = process.env.LOGNAME
     @root    = path.resolve __dirname, '..'
+    
+    if config.production
+      @previewUrl  = "https://koding.com/Preview"
+    else
+      @previewUrl  = "https://koding.com/bvallelunga/Apps/Preview"
     
   getManifest: ->
     manifestPath = "#{@path}/manifest.json"
@@ -45,15 +51,20 @@ class Lib
     
     if env is "store"
       console.log """
-        Please make sure all changes have been committed.
-        To finish publishing: https://koding.com/bvallelunga/Apps/Preview?publish=production&path=#{@path}
+        Please make sure all changes have been committed to github.
+        
+        To finish publishing: #{@previewUrl}?publish=production&path=#{@path}
+        
       """
     else
-      console.log "To finish publishing: https://koding.com/bvallelunga/Apps/Preview?publish=test&path=#{@path}"
+      console.log """
+        To finish publishing: #{@previewUrl}?publish=test&path=#{@path}
+        
+      """
  
   serve: (options)->
     manifest = @getManifest()
-    serve    = new Serve manifest, @user, @path
+    serve    = new Serve manifest, @user, @path, @previewUrl
     
     @compile()
     serve.start =>

@@ -4,12 +4,13 @@ Exec          = require('child_process')
 EventEmitter  = require('events').EventEmitter
 
 class Serve extends EventEmitter
-  constructor: (manifest, user, path) ->
-    @manifest  = manifest
-    @user      = user 
-    @path      = path
-    @webFolder = "/home/#{@user}/Web"
-    @appFolder = "#{@webFolder}/#{manifest.name}.kdapp"
+  constructor: (manifest, user, path, previewUrl) ->
+    @manifest   = manifest
+    @user       = user 
+    @path       = path
+    @previewUrl = previewUrl 
+    @webFolder  = "/home/#{@user}/Web"
+    @appFolder  = "#{@webFolder}/#{manifest.name}.kdapp"
     
   start: (cb)->
     Exec.exec """
@@ -24,7 +25,7 @@ class Serve extends EventEmitter
         message = """
         
         Starting app server...
-        Listening on https://koding.com/bvallelunga/Apps/Preview?app=#{@manifest.name}
+        Listening on #{@previewUrl}?app=#{@manifest.name}
         
         ctrl-c to stop the server
           
