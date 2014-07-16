@@ -54,12 +54,10 @@ class Lib
         Please make sure all changes have been committed to github.
         
         To finish publishing: #{@previewUrl}?publish=production&path=#{@path}
-        
       """
     else
       console.log """
         To finish publishing: #{@previewUrl}?publish=test&path=#{@path}
-        
       """
  
   serve: (options)->
