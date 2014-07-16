@@ -41,8 +41,16 @@ class Lib
       Coffee manifest, @path
       Less manifest, @path
   
-  publish: console.log
-  
+  publish: (env, options)->
+    
+    if env is "store"
+      console.log """
+        Please make sure all changes have been committed.
+        To finish publishing: https://koding.com/bvallelunga/Apps/Preview?publish=production&path=#{@path}
+      """
+    else
+      console.log "To finish publishing: https://koding.com/bvallelunga/Apps/Preview?publish=test&path=#{@path}"
+ 
   serve: (options)->
     manifest = @getManifest()
     serve    = new Serve manifest, @user, @path

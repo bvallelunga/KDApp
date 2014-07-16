@@ -7,7 +7,7 @@ lib             = require('./lib') program
 
 program
   .version config.version
-  .option '-l, --log', 'Enable Logging'
+  .option '-q, --quite', 'Disable Logging'
 
 program 
   .command 'create [name]'
@@ -32,13 +32,13 @@ program
   
 program
   .command 'publish [env]'
-  .description 'Publish to <sandbox> or <production> enviroment'
+  .description 'Publish to <sandbox> or <store> enviroment'
   .action lib.publish.bind lib
   
 program
   .command 'help'
   .description 'Output help information'
   .action lib.help.bind lib
-  
+
 program.parse process.argv
 program.help() unless program.args.length
