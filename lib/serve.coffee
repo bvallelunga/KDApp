@@ -1,4 +1,5 @@
 fs            = require 'fs-extra'
+googl         = require 'goo.gl'
 watch         = require 'node-watch'
 Exec          = require('child_process')
 EventEmitter  = require('events').EventEmitter
@@ -22,14 +23,16 @@ class Serve extends EventEmitter
       unless err
         @emit "compile"
         
-        message = """
-        
-        Starting app server...
-        Listening on #{@previewUrl}?app=#{@manifest.name}
-        
-        ctrl-c to stop the server
-          
-        """
+        googl.shorten "#{@previewUrl}?app=#{@manifest.name}"
+          .then (shortUrl)->
+            console.log """
+            
+            Starting app server...
+            Listening on #{shortUrl}
+            
+            ctrl-c to stop the server
+              
+            """
         
         stdin = process.stdin
         stdin.setRawMode true
@@ -43,9 +46,7 @@ class Serve extends EventEmitter
         
         cb()
       else
-        message = "Failed to start app server"
-      
-      console.log message
+        console.log "Failed to start app server"
       
   watch: (compile)->
     excludeFiles = ["#{@path}/index.js", "#{@path}/resources/style.css"]
