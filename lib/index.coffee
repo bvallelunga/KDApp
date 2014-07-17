@@ -52,12 +52,11 @@ class Lib
   publish: (env, options)->
     # Use to check if app exists
     @getManifest()
-    googl.shorten()
-    
+
     if env is "store"
       publishMode = "production"
       console.log """
-      Please make sure all changes have been committed to github.
+      Please make sure all changes have been pushed to github.
       
       """
     else

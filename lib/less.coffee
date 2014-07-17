@@ -24,7 +24,7 @@ module.exports = (manifest, appPath, force)->
   parser = new(less.Parser)
     paths: [appPath, "#{appPath}/resources"]
   
-  if files.less and files.less.length not 0
+  if files.less and files.less.length != 0
     async.reduce files.less, "", (css, file, callback)-> 
       file = path.normalize (path.join appPath, file) if appPath
       
