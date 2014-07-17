@@ -1,5 +1,7 @@
 fs        = require 'fs-extra'
 path      = require 'path'
+os        = require 'os'
+googl     = require 'goo.gl'
 Coffee    = require './coffee'
 Less      = require './less'
 Serve     = require './serve'
@@ -7,10 +9,11 @@ Create    = require './create'
 
 class Lib
   constructor: (config, program) ->
-    @program = program
-    @path    = process.env.PWD
-    @user    = process.env.LOGNAME
-    @root    = path.resolve __dirname, '..'
+    @program  = program
+    @path     = process.env.PWD
+    @user     = process.env.LOGNAME
+    @root     = path.resolve __dirname, '..'
+    @hostname = os.hostname()
     
     if config.production
       @previewUrl  = "https://koding.com/Preview"
@@ -49,17 +52,23 @@ class Lib
   publish: (env, options)->
     # Use to check if app exists
     @getManifest()
+    googl.shorten()
     
     if env is "store"
+      publishMode = "production"
       console.log """
-        Please make sure all changes have been committed to github.
-        
-        To finish publishing: #{@previewUrl}?publish=production&path=#{@path}
+      Please make sure all changes have been committed to github.
+      
       """
     else
-      console.log """
-        To finish publishing: #{@previewUrl}?publish=test&path=#{@path}
-      """
+      publishMode = "test"
+
+    googl.shorten "#{@previewUrl}?publish=#{publishMode}&hostname=#{@hostname}&path=#{@path}"
+      .then (shortUrl)->
+        console.log "To finish publishing: #{shortUrl}"
+      
+      .catch (err)->
+        console.error err.message
  
   serve: (options)->
     manifest = @getManifest()

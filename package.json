@@ -2,7 +2,7 @@
   "name": "kdapp",
   "description": "KDApp is the Koding app store cli.",
   "author": "Brian Vallelunga <vallelungabrian@gmail.com>",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "production": false, 
   "dependencies": {
@@ -11,10 +11,11 @@
     "async": "0.9.0",
     "applause": "0.3.3",
     "less": "1.7.3",
-    "node-watch": "0.3.4"
+    "node-watch": "0.3.4",
+    "goo.gl": "0.1.0"
   },
   "scripts": { 
-    "postinstall": "npm install -g coffee-script" 
+    "postinstall": "sudo npm install -g coffee-script" 
   },
   "keywords": [
         "cli",
