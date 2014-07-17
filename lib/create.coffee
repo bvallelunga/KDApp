@@ -8,10 +8,15 @@ class Create
     @root      = root
     @appName   = app
     
-  capitalize: (string)->
-    return (string.split(' ').map (word) -> 
-      word[0].toUpperCase() + word[1..-1].toLowerCase()
-    ).join ' '
+  capitalize: (string, once=false)->
+    unless once
+      string = (string.split(' ').map (word) -> 
+        word[0].toUpperCase() + word[1..-1].toLowerCase()
+      ).join ' '
+    else
+      string = string[0].toUpperCase() + string[1..-1].toLowerCase() 
+    
+    return string
     
   nameify: (string)->
     return string.replace(' ', '')
@@ -20,6 +25,7 @@ class Create
     app       = @capitalize @appName
     appLower  = @nameify @appName.toLowerCase()
     appCap    = @nameify @capitalize @appName
+    appCapOne = @nameify @capitalize @appName, true
     userLower = @user.toLowerCase()
     userCap   = @capitalize @user
     skelApp   = "#{@root}/apps/Skeleton.kdapp"
@@ -30,9 +36,10 @@ class Create
       unless err
         applause = Applause.create
           variables:
-            'a' : app
-            'al': appLower
-            'ac': appCap
+            'a'   : app
+            'al'  : appLower
+            'ac'  : appCap
+            'aco' : appCapOne
             'u' : @user
             'ul': userLower
             'uc': userCap

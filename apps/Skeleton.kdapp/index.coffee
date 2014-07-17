@@ -28,9 +28,9 @@ do ->
 
   else
     KD.registerAppClass @@acController,
-      name     : "@@ac"
+      name     : "@@aco"
       routes   :
-        "/:name?/@@ac" : null
-        "/:name?/@@ul/Apps/@@ac" : null
-      dockPath : "/@@ul/Apps/@@ac"
+        "/:name?/@@aco" : null
+        "/:name?/@@ul/Apps/@@aco" : null
+      dockPath : "/@@ul/Apps/@@aco"
       behavior : "application"
