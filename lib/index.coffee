@@ -4,7 +4,7 @@ os        = require 'os'
 googl     = require 'goo.gl'
 Coffee    = require './coffee'
 Less      = require './less'
-Serve     = require './serve'
+Preview   = require './preview'
 Create    = require './create'
 
 class Lib
@@ -69,14 +69,14 @@ class Lib
       .catch (err)->
         console.error err.message
  
-  serve: (options)->
+  preview: (options)->
     manifest = @getManifest()
-    serve    = new Serve manifest, @user, @path, @previewUrl
+    preview  = new Preview manifest, @user, @path, @previewUrl
     
     @compile()
-    serve.start =>
-      serve.watch() if options.watch
-      serve.on "compile", @compile.bind @ 
+    preview.start =>
+      preview.watch() if options.watch
+      preview.on "compile", @compile.bind @ 
   
   help: ()->
     @program.help()

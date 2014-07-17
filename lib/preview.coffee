@@ -4,7 +4,7 @@ watch         = require 'node-watch'
 Exec          = require('child_process')
 EventEmitter  = require('events').EventEmitter
 
-class Serve extends EventEmitter
+class Preview extends EventEmitter
   constructor: (manifest, user, path, previewUrl) ->
     @manifest   = manifest
     @user       = user 
@@ -60,4 +60,4 @@ class Serve extends EventEmitter
     
     console.log "Started watching for changes"
 
-module.exports = Serve
+module.exports = Preview

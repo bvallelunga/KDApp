@@ -24,11 +24,11 @@ program
   .action lib.compile.bind lib
   
 program 
-  .command 'serve'
+  .command 'preview'
   .option '-a, --watch', 'Enable watching for file changes and then compile (default: true)'
   .option '-n, --no-watch', 'Disable watching for file changes'
-  .description 'Serves the application on a local web server'
-  .action lib.serve.bind lib
+  .description 'Preview the application on a local web server'
+  .action lib.preview.bind lib
   
 program
   .command 'publish [env]'
