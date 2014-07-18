@@ -39,3 +39,66 @@ Options:
   -V, --version  output the version number
   -q, --quite    Disable Logging
 ```
+
+## Manifest
+
+A `manifest.json` will be created in the root project directory. The manifest should resemble this.
+
+```
+{
+  "background": false,
+  "behavior": "application",
+  "version": "0.1",
+  "title": "First App",
+  "name": "Firstapp",
+  "identifier": "com.koding.apps.firstapp",
+  "path": "~/Applications/FirstApp",
+  "homepage": "bvallelunga.kd.io/firstapp",
+  "repository": "git://github.com/bvallelunga/firstapp.kdapp.git",
+  "description": "FirstApp : a Koding application created with the blank template.",
+  "category": "web-app",
+  "source": {
+    "blocks": {
+      "app": {
+        "files": [
+          "./index.coffee"
+        ]
+      }
+    },
+    "stylesheets": [
+      "./resources/style.css"
+    ]
+  },
+  "options": {
+    "type": "tab"
+  },
+  "icns": {
+    "128": "./resources/icon.128.png"
+  },
+  "fileTypes": []
+}
+```
+
+### Adding Support for [LESS](https://github.com/less/less.js)
+
+Update the `manifest.json` by adding a `less` block under `sources`
+
+```
+"source": {
+  "blocks": {
+    "app": {
+      "files": [
+        "./index.coffee"
+      ]
+    }
+  },
+  "stylesheets": [
+    "./resources/style.css"
+  ],
+  "less": [
+    "./less/style.less"
+  ]
+}
+```
+
+
