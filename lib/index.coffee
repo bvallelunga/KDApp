@@ -71,7 +71,7 @@ class Lib
  
   preview: (options)->
     manifest = @getManifest()
-    preview  = new Preview manifest, @user, @path, @previewUrl
+    preview  = new Preview manifest, @user, @path, @root, @previewUrl
     
     @compile()
     preview.start =>

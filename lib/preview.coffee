@@ -5,10 +5,11 @@ Exec          = require('child_process')
 EventEmitter  = require('events').EventEmitter
 
 class Preview extends EventEmitter
-  constructor: (manifest, user, path, previewUrl) ->
+  constructor: (manifest, user, path, root, previewUrl) ->
     @manifest   = manifest
     @user       = user 
     @path       = path
+    @root       = root
     @previewUrl = previewUrl 
     @webFolder  = "/home/#{@user}/Web"
     @appFolder  = "#{@webFolder}/#{manifest.name}.kdapp"
@@ -17,13 +18,16 @@ class Preview extends EventEmitter
     Exec.exec """
       mkdir -p #{@webFolder}
       mkdir -p #{@appFolder}
+      cp --force #{@root}/apps/redirect.html #{@appFolder}/index.html
       ln -s --force #{@path}/index.js #{@appFolder}/index.js
       ln -s --force #{@path}/resources/style.css #{@appFolder}/style.css
     """, (err)=>
       unless err
         @emit "compile"
+        previewUrl = encodeURIComponent "#{@previewUrl}?app=#{@manifest.name}"
+        redirectUrl = "https://#{@user}.kd.io/#{@manifest.name}.kdapp/?next=#{previewUrl}"
         
-        googl.shorten "#{@previewUrl}?app=#{@manifest.name}"
+        googl.shorten redirectUrl
           .then (shortUrl)->
             console.log """
             
