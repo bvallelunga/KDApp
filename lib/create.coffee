@@ -20,8 +20,19 @@ class Create
     
   nameify: (string)->
     return string.replace(' ', '')
+    
+  inApplicationsFolder: ->
+    pathArray = @path.split("/")
+    return pathArray[pathArray.length - 1] is "Applications"
   
   app: ->
+    unless @inApplicationsFolder()
+      return console.log """
+      Apps can only be created in the Applications folder!
+      
+      To fix: cd ~/Applications
+      """
+    
     app       = @capitalize @appName
     appLower  = @nameify @appName.toLowerCase()
     appCap    = @nameify @capitalize @appName
