@@ -44,6 +44,6 @@ module.exports = (manifest, appPath, force)->
           callback "The required file not found: #{file}"
     , (err, css)->
       unless err
-        fs.writeFileSync path.normalize(path.join appPath, files.stylesheets[0]), css
+        fs.writeFileSync path.normalize(path.join appPath, "./resources/style.css"), css
       else
         console.log err if force

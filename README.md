@@ -1,5 +1,14 @@
-# KDApp CLI
-> KDApp command-line interface for Koding.com
+# What is KDApp CLI
+KDApp CLI is a command-line version of the infamous [DevTools](https://koding.com/DevTools), an app that enables developers to build/test/publish koding apps. 
+KDApp is made for the power users of Koding.com, the developers whose native enviroment is the command-line.
+There are some significant improvements to note about KDApp CLI:
+
+- Separate code into multiple files
+  - Make sure to list all the files in the `manifest.json`
+- Support for [LESS](https://github.com/less/less.js)
+- Ability to preview your apps as if they were already published
+  - Auto compiling of **LESS** and **Coffeescript** on file change
+  - Reload the page to get newly compiled app
 
 ## Requirements
 
@@ -79,6 +88,36 @@ A `manifest.json` will be created in the root project directory. The manifest sh
 }
 ```
 
+### Adding Support for Code Separation
+
+Update the `manifest.json` by adding your new files block under `files`
+
+```
+"source": {
+  "blocks": {
+    "app": {
+    
+      # Order files by dependencies, meaning that the 
+      # index.coffee should be last since it requires both 
+      # foo and bar classes
+      
+      "files": [
+        "./foo.coffee"   # File 3
+        "./bar.coffee"   # File 2
+        "./index.coffee" # File 1 
+      ]
+    }
+  },
+  "stylesheets": [
+    "./resources/style.css"
+  ],
+  "less": [
+    "./less/style.less"
+  ]
+}
+```
+
+
 ### Adding Support for [LESS](https://github.com/less/less.js)
 
 Update the `manifest.json` by adding a `less` block under `sources`
@@ -92,11 +131,19 @@ Update the `manifest.json` by adding a `less` block under `sources`
       ]
     }
   },
+  
+  # Do NOT remove stylesheets block
+  
   "stylesheets": [
     "./resources/style.css"
   ],
+  
+  # List your less files here
+  
   "less": [
-    "./less/style.less"
+    "./less/style.less"  # File 1
+    "./less/colors.less" # File 2
+    "./less/mixins.less" # File 3
   ]
 }
 ```
