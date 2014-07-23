@@ -1,26 +1,29 @@
 # What is KDApp CLI
-KDApp CLI is a command-line version of the infamous [DevTools](https://koding.com/DevTools), an app that enables developers to build/test/publish koding apps. 
+KDApp CLI is a command-line version of the Koding DevTools, an app that enables developers to build, test, publish koding apps. 
 KDApp is made for the power users of Koding.com, the developers whose native enviroment is the command-line.
-There are some significant improvements to note about KDApp CLI:
 
-- Separate code into multiple files
-  - Make sure to list all the files in the `manifest.json`
-- Support for [LESS](https://github.com/less/less.js)
+
+# Significant Improvements
+
+- Support for separating code into multiple files
+  - Make sure to list all the files in the [manifest.json](#adding-support-for-code-separation)
+- Support for [LESS](#adding-support-for-less)
 - Ability to preview your apps as if they were already published
+  - Previewing is implemented through companion [Preview app](https://github.com/bvallelunga/Preview.kdapp)  
   - Auto compiling of **LESS** and **Coffeescript** on file change
   - Reload the page to get newly compiled app
 
-## Requirements
+# Requirements
 
 - [Install node.js](http://nodejs.org/) version `>=0.10.x`
 
-## Install
+# Install
 
 ```
 $ sudo npm install -g kdapp
 ```
 
-## Getting Started
+# Getting Started
 
 ```
 $ kdapp create "First App" # create KDApp project
@@ -28,7 +31,7 @@ $ cd FirstApp.kdapp        # change to project directory
 $ kdapp preview            # compile and prview app
 ```
 
-## Usage
+# Usage
 
 ```
 Usage: kdapp [options] [command]
@@ -49,7 +52,7 @@ Options:
   -q, --quite    Disable Logging
 ```
 
-## Manifest
+# Manifest
 
 A `manifest.json` will be created in the root project directory. The manifest should resemble this.
 
@@ -88,7 +91,7 @@ A `manifest.json` will be created in the root project directory. The manifest sh
 }
 ```
 
-### Adding Support for Code Separation
+## Adding Support for Code Separation
 
 Update the `manifest.json` by adding your new files block under `files`
 
@@ -118,7 +121,7 @@ Update the `manifest.json` by adding your new files block under `files`
 ```
 
 
-### Adding Support for [LESS](https://github.com/less/less.js)
+## Adding Support for [LESS](https://github.com/less/less.js)
 
 Update the `manifest.json` by adding a `less` block under `sources`
 
