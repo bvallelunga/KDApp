@@ -138,12 +138,14 @@ Update the `manifest.json` by adding a `less` block under `sources`
     "./resources/style.css"
   ],
   
-  # List your less files here
+  # Order files by dependencies, meaning that the 
+  # stule.less should be last since it requires both 
+  # mixins and colors files 
   
   "less": [
-    "./less/style.less"  # File 1
-    "./less/colors.less" # File 2
     "./less/mixins.less" # File 3
+    "./less/colors.less" # File 2
+    "./less/style.less"  # File 1
   ]
 }
 ```
