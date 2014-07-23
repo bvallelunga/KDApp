@@ -149,5 +149,3 @@ Update the `manifest.json` by adding a `less` block under `sources`
   ]
 }
 ```
-
-
