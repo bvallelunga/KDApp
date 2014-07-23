@@ -9,7 +9,7 @@ KDApp is made for the power users of Koding.com, the developers whose native env
   - Make sure to list all the files in the [manifest.json](#adding-support-for-code-separation)
 - Support for [LESS](#adding-support-for-less)
 - Ability to preview your apps as if they were already published
-  - Previewing is implemented through companion [Preview app](https://github.com/bvallelunga/Preview.kdapp)  
+  - Previewing is implemented through companion [Preview app](https://koding.com/Apps/bvallelunga/Preview)  
   - Auto compiling of **LESS** and **Coffeescript** on file change
   - Reload the page to get newly compiled app
 
