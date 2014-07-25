@@ -66,10 +66,11 @@ class Create
           fs.writeFileSync "#{tempApp}/#{file}", result
           
         fs.move tempApp, destApp, (err)->
-          if err
+          unless err
+            console.log "Your new project is called: #{appCap}.kdapp"
+          else
             fs.removeSync tempApp
             console.log "Failed to create #{appCap}.kdapp"
-          
       else
         console.log "Failed to create #{appCap}.kdapp"
 

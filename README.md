@@ -1,7 +1,10 @@
+# Prerequisites
+
+If you have never made a KDApp before, please go through the [Creating KDApps](http://learn.koding.com/guides/creating-kdapps/) guide before continuing.
+
 # What is KDApp CLI
 KDApp CLI is a command-line version of the Koding DevTools, an app that enables developers to build, test, publish koding apps. 
 KDApp is made for the power users of [koding.com](http://koding.com), the developers whose native enviroment is the command-line.
-
 
 # Significant Improvements
 
