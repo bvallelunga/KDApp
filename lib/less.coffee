@@ -30,20 +30,15 @@ module.exports = (manifest, appPath, force)->
       
       if /\.less/.test file
         if fs.existsSync file
-          contents = fs.readFileSync file, 'utf-8'
-          
-          parser.parse contents, (err, tree)->
-            compiledCss = tree.toCSS()
-            
-            if !err and "" not in [compiledCss, contents]
-              callback null, css + compiledCss
-            else
-              callback "Failed to compile #{file}"
-              
+          callback null, css + fs.readFileSync file, 'utf-8'
         else if force
           callback "The required file not found: #{file}"
-    , (err, css)->
+    , (err, less)->
       unless err
-        fs.writeFileSync path.normalize(path.join appPath, "./resources/style.css"), css
+        parser.parse less, (err, tree)->
+          return console.log "Failed to compile LESS" if err
+          
+          compiledCss = tree.toCSS()
+          fs.writeFileSync path.normalize(path.join appPath, "./resources/style.css"), compiledCss
       else
         console.log err if force
