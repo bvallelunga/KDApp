@@ -10,8 +10,8 @@ program
   .option '-q, --quite', 'Disable Logging'
 
 program 
-  .command 'create [name]'
-  .description 'Create a new KDApp project'
+  .command 'create [type] [name]'
+  .description 'Create a new <basic> or <installer> KDApp (default: basic)'
   .action lib.create.bind lib
 
 program 

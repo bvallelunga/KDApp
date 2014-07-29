@@ -1,12 +1,14 @@
 fs        = require 'fs-extra'
 Applause  = require 'applause'
+async     = require 'async'
 
 class Create
-  constructor: (user, app, path, root) ->
+  constructor: (user, type, app, path, root) ->
     @user      = user 
     @path      = path
     @root      = root
     @appName   = app
+    @type      = type 
     
   capitalize: (string, once=false)->
     unless once
@@ -33,13 +35,23 @@ class Create
       To fix: cd ~/Applications
       """
     
+    switch @type
+      when "basic" then skelAppName = "Skeleton"
+      when "installer" then skelAppName = "InstallerSkeleton"
+      else return console.log """
+      Unknown template type: #{@type}
+      
+      To fix, choose one of the following: basic or installer
+      Then run command: kdapp create <type> #{@appName}
+      """
+    
     app       = @capitalize @appName
     appLower  = @nameify @appName.toLowerCase()
     appCap    = @nameify @capitalize @appName
-    appCapOne = @nameify @capitalize @appName, true
+    appCapOne = @nameify @capitalize @appName, yes
     userLower = @user.toLowerCase()
     userCap   = @capitalize @user
-    skelApp   = "#{@root}/apps/Skeleton.kdapp"
+    skelApp   = "#{@root}/apps/#{skelAppName}.kdapp"
     tempApp   = "/tmp/#{appCap}.kdapp"
     destApp   = "#{@path}/#{appCap}.kdapp"
     
@@ -51,26 +63,41 @@ class Create
             'al'  : appLower
             'ac'  : appCap
             'aco' : appCapOne
-            'u' : @user
-            'ul': userLower
-            'uc': userCap
+            'u'   : @user
+            'ul'  : userLower
+            'uc'  : userCap
         
         files = [
           "ChangeLog", "README.md", "index.coffee", 
           "manifest.json", "resources/style.css"
         ]
         
-        for file in files
+        if @type is "installer"
+          files = files.concat [
+            "config.coffee", "views/index.coffee",
+            "less/style.less", "controllers/installer.coffee"
+          ]
+        
+        async.each files, (file, next)->
           contents = fs.readFileSync "#{tempApp}/#{file}", 'utf8'
           result = applause.replace contents
-          fs.writeFileSync "#{tempApp}/#{file}", result
-          
-        fs.move tempApp, destApp, (err)->
-          unless err
-            console.log "Your new project is called: #{appCap}.kdapp"
-          else
+          fs.writeFile "#{tempApp}/#{file}", result, next
+        , (err)->
+          if err
             fs.removeSync tempApp
-            console.log "Failed to create #{appCap}.kdapp"
+            console.log """
+              Failed to create #{appCap}.kdapp
+              
+              Please commit your files before testing. Installer apps pull
+              the images and scripts from your repository.
+            """
+          else
+            fs.move tempApp, destApp, (err)->
+              unless err
+                console.log "Your new project is called: #{appCap}.kdapp"
+              else
+                fs.removeSync tempApp
+                console.log "Failed to create #{appCap}.kdapp"
       else
         console.log "Failed to create #{appCap}.kdapp"
 

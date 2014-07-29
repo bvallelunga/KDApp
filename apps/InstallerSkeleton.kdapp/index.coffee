@@ -1,14 +1,3 @@
-class @@acMainView extends KDView
-
-  constructor:(options = {}, data)->
-    options.cssClass = '@@al main-view'
-    super options, data
-
-  viewAppended:->
-    @addSubView new KDView
-      partial  : "Welcome to @@a app!"
-      cssClass : "welcome-view"
-
 class @@acController extends AppController
 
   constructor:(options = {}, data)->

@@ -14,12 +14,21 @@
     "blocks": {
       "app": {
         "files": [
+          "./config.coffee",
+          "./controllers/kiteHelper.coffee",
+          "./controllers/installer.coffee",
+          "./views/index.coffee",
           "./index.coffee"
         ]
       }
     },
     "stylesheets": [
       "./resources/style.css"
+    ],
+    "less": [
+      "./less/mixins.less",
+      "./less/modal.less",
+      "./less/style.less"
     ]
   },
   "options": {

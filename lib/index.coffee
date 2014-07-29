@@ -32,10 +32,13 @@ class Lib
         console.log "Manifest file seems corrupted: #{manifestPath}"
       process.exit error.errno or 3
       
-  create: (app, options) ->
-    return @help() unless app
+  create: (type, app, options) ->
+    if not app and type
+      [app, type] = [type, 'basic']
+    else unless app and type
+      return @help()
     
-    create = new Create @user, app, @path, @root
+    create = new Create @user, type, app, @path, @root
     create.app()
   
   compile: (type)->
@@ -44,7 +47,7 @@ class Lib
     if type
       switch type
         when "coffee" then Coffee manifest, @path
-        when "less" then Less manifest, @path, true
+        when "less" then Less manifest, @path, yes
     else 
       Coffee manifest, @path
       Less manifest, @path

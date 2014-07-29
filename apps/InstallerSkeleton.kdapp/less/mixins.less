@@ -1,0 +1,24 @@
+// Transition Mixin
+@transition-property: all;
+@transition-duration: .2s;
+@transition-timing-function: ease;
+@transition-delay: 0;
+
+.transition(
+    @property: @transition-property,
+    @duration: @transition-duration,
+    @timing-function: @transition-timing-function,
+    @delay: @transition-delay) {
+        -webkit-transition: @arguments;
+        -moz-transition: @property, @duration, @timing-function;
+        -o-transition: @arguments;
+        transition: @arguments;
+}
+
+// Border-radius
+@border-radius: 5px;
+.border-radius(@radius: @border-radius) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    border-radius: @radius;
+}
