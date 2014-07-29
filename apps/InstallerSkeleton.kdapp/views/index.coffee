@@ -86,6 +86,9 @@ class @@acMainView extends KDView
         @uninstallButton.show()
         @link.setSession()
         @updateProgress message, percentage
+      when WORKING
+        @Installer.state = @Installer.lastState
+        @updateProgress message, percentage
       when FAILED
         @Installer.state = @Installer.lastState
         @statusUpdate message, percentage
