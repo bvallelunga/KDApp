@@ -85,16 +85,16 @@ class Create
         , (err)->
           if err
             fs.removeSync tempApp
-            console.log """
-              Failed to create #{appCap}.kdapp
-              
-              Please commit your files before testing. Installer apps pull
-              the images and scripts from your repository.
-            """
+            console.log "Failed to create #{appCap}.kdapp"
           else
             fs.move tempApp, destApp, (err)->
               unless err
-                console.log "Your new project is called: #{appCap}.kdapp"
+                console.log """
+                Your new project is called: #{appCap}.kdapp
+                
+                Please commit your files before testing. Koding apps pull
+                the assets (images and scripts) from your repository.
+                """
               else
                 fs.removeSync tempApp
                 console.log "Failed to create #{appCap}.kdapp"
