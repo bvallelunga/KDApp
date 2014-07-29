@@ -1,6 +1,7 @@
 fs        = require 'fs-extra'
 Applause  = require 'applause'
 async     = require 'async'
+googl     = require 'goo.gl'
 
 class Create
   constructor: (user, type, app, path, root) ->
@@ -89,12 +90,16 @@ class Create
           else
             fs.move tempApp, destApp, (err)->
               unless err
-                console.log """
-                Your new project is called: #{appCap}.kdapp
-                
-                Please commit your files before testing. Koding apps pull
-                the assets (images and scripts) from your repository.
-                """
+                googl.shorten "https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line"
+                  .then (shortUrl)->
+                    console.log """
+                    Your new project is called: #{appCap}.kdapp
+                    
+                    Please commit your files before testing. Koding apps pull
+                    the assets (images and scripts) from your repository.
+                    
+                    Follow this guide: #{shortUrl}
+                    """
               else
                 fs.removeSync tempApp
                 console.log "Failed to create #{appCap}.kdapp"
