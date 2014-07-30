@@ -45,26 +45,17 @@ class {{ appCap }}MainView extends KDView
     @buttonContainer.addSubView @installButton = new KDButtonView
       title         : "Install #{appName}"
       cssClass      : 'button green solid hidden'
-      callback      : =>
-        @passwordModal no, (password)=> 
-          if password?
-            @Installer.command INSTALL, password
+      callback      : => @commitCommand INSTALL
       
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
       cssClass      : 'button solid hidden'
-      callback      : =>
-        @passwordModal no, (password)=> 
-          if password?
-            @Installer.command REINSTALL, password
+      callback      : => @commitCommand REINSTALL
         
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
       cssClass      : 'button red solid hidden'
-      callback      : =>
-        @passwordModal no, (password)=> 
-          if password?
-            @Installer.command UNINSTALL, password
+      callback      : => @commitCommand UNINSTALL
 
     @container.addSubView new KDCustomHTMLView
       cssClass : "description"
@@ -98,11 +89,22 @@ class {{ appCap }}MainView extends KDView
       when WRONG_PASSWORD
         @Installer.state = @Installer.lastState
         @passwordModal yes, (password)=>
-          if password?
-            @Installer.command @Installer.lastCommand, password
+          @Installer.command @Installer.lastCommand, password if password?
       else
         @updateProgress message, percentage
-          
+  
+  commitCommand: (command)->
+    switch command
+      when INSTALL then name = "install"
+      when REINSTALL then name = "reinstall"
+      when UNINSTALL then name = "uninstall"
+      else return throw "Command not registered."
+  
+    if scripts[name].sudo
+      @passwordModal no, (password)=> 
+        @Installer.command command, password if password?
+    else
+      @Installer.command command
   
   passwordModal: (error, cb)->
     unless @modal

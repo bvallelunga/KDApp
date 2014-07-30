@@ -17,7 +17,7 @@ class {{ appCap }}InstallerController extends KDController
   
   init: ->
     @kiteHelper.getKite().then (kite)=>
-      kite.fsExists path: installChecker
+      kite.fsExists(path: installChecker)
         .then (state)=>
           unless state
             @announce "#{appName} not installed", NOT_INSTALLED
@@ -39,8 +39,8 @@ class {{ appCap }}InstallerController extends KDController
     @watcher.watch()
     
     @kiteHelper.run
-      command: "curl -sL #{github}/scripts/#{name}.sh | bash -s #{user} #{logger}"
-      password: password
+      command: "curl -sL #{scripts[name].url} | bash -s #{user} #{logger}"
+      password: if scripts[name].sudo then password else null
     , (err, res)=>
       @watcher.stopWatching()
 
@@ -81,7 +81,7 @@ class {{ appCap }}InstallerController extends KDController
         return resolve yes
       
       @kiteHelper.getKite().then (kite)=>
-        kite.fsExists path: configuredChecker
+        kite.fsExists(path: configuredChecker)
           .then resolve
           .catch reject
             

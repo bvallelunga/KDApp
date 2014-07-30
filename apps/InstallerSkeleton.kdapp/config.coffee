@@ -16,6 +16,16 @@ configureURL            = "https://#{domain}/#{app}/install"                    
 installChecker          = "/home/#{user}/Web/#{app}/"                                  # Path used to check if the app is instaled
 configuredChecker       = "/home/#{user}/Web/#{app}/config.inc.php"                    # Path used to check if app is configured (can be set to "false")
 logger                  = "/tmp/_#{appName}Installer.out/#{session}/"                  # Path used to log installer progress
+scripts                 =                                                              # Scripts with url and if sudo access required
+  install   :
+    url     : "#{github}/scripts/install.sh"
+    sudo    : true
+  reinstall :
+    url     : "#{github}/scripts/reinstall.sh"
+    sudo    : true
+  uninstal  :
+    url     : "#{github}/scripts/uninstall.sh"
+    sudo    : false
 description             =                                                              # The main description centered under the progress bar
 """
 <p>
