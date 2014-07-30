@@ -1,22 +1,19 @@
-.@@al.main-view {
+.{{ appCap }}.main-view {
   background: white;
 }
 
-.@@al .welcome-view {
-
+.{{ appLower }} .welcome-view {
   background: #eee;
 
   height: auto;
   width: auto;
   max-width: 300px;
 
+  padding:10px;
   margin: 50px auto;
 
   border: 1px solid #ccc;
   border-radius: 4px;
 
-  padding:10px;
-
   text-align:center;
-
 }

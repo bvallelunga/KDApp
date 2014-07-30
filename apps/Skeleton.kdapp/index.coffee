@@ -1,20 +1,20 @@
-class @@acMainView extends KDView
+class {{ appCap }}MainView extends KDView
 
   constructor:(options = {}, data)->
-    options.cssClass = '@@al main-view'
+    options.cssClass = '{{ appLower }} main-view'
     super options, data
 
   viewAppended:->
     @addSubView new KDView
-      partial  : "Welcome to @@a app!"
+      partial  : "Welcome to {{ app }} app!"
       cssClass : "welcome-view"
 
-class @@acController extends AppController
+class {{ appCap }}Controller extends AppController
 
   constructor:(options = {}, data)->
-    options.view    = new @@acMainView
+    options.view    = new {{ appCap }}MainView
     options.appInfo =
-      name : "@@a"
+      name : "{{ app }}"
       type : "application"
 
     super options, data
@@ -23,14 +23,14 @@ do ->
 
   # In live mode you can add your App view to window's appView
   if appView?
-    view = new @@acMainView
+    view = new {{ appCap }}MainView
     appView.addSubView view
 
   else
-    KD.registerAppClass @@acController,
-      name     : "@@aco"
+    KD.registerAppClass {{ appCap }}Controller,
+      name     : "{{ appCapOne }}"
       routes   :
-        "/:name?/@@aco" : null
-        "/:name?/@@ul/Apps/@@aco" : null
-      dockPath : "/@@ul/Apps/@@aco"
+        "/:name?/{{ appCapOne }}" : null
+        "/:name?/{{ userLower }}/Apps/{{ appCapOne }}" : null
+      dockPath : "/{{ userLower }}/Apps/{{ appCapOne }}"
       behavior : "application"

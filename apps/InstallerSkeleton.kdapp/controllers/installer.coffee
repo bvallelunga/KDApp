@@ -1,15 +1,15 @@
-class @@acInstallerController extends KDController
+class {{ appCap }}InstallerController extends KDController
   
   constructor:(options = {}, data)->
 
-    {@@alInstallerController} = KD.singletons
-    return @@alInstallerController if @@alInstallerController
+    { {{ appLower }}InstallerController } = KD.singletons
+    return {{ appLower }}InstallerController if {{ appLower }}InstallerController
 
     super options, data
 
     @kiteHelper = new KiteHelper
     @kiteHelper.ready @bound "configureWatcher"
-    @registerSingleton "@@alInstallerController", this, yes
+    @registerSingleton "{{ appLower }}InstallerController", this, yes
   
   announce:(message, state, percentage)->
     @updateState state if state?

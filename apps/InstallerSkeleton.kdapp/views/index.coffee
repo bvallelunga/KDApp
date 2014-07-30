@@ -1,8 +1,8 @@
-class @@acMainView extends KDView
+class {{ appCap }}MainView extends KDView
     
   constructor:(options = {}, data)->
     options.cssClass = "#{appName}-installer main-view"
-    @Installer = new @@acInstallerController
+    @Installer = new {{ appCap }}InstallerController
     super options, data
   
   viewAppended: ->

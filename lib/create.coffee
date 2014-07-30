@@ -1,5 +1,5 @@
 fs        = require 'fs-extra'
-Applause  = require 'applause'
+cons      = require('consolidate');
 async     = require 'async'
 googl     = require 'goo.gl'
 
@@ -58,16 +58,6 @@ class Create
     
     fs.copy skelApp, tempApp, (err)=>
       unless err
-        applause = Applause.create
-          variables:
-            'a'   : app
-            'al'  : appLower
-            'ac'  : appCap
-            'aco' : appCapOne
-            'u'   : @user
-            'ul'  : userLower
-            'uc'  : userCap
-        
         files = [
           "ChangeLog", "README.md", "index.coffee", 
           "manifest.json", "resources/style.css"
@@ -79,10 +69,17 @@ class Create
             "less/style.less", "controllers/installer.coffee"
           ]
         
-        async.each files, (file, next)->
-          contents = fs.readFileSync "#{tempApp}/#{file}", 'utf8'
-          result = applause.replace contents
-          fs.writeFile "#{tempApp}/#{file}", result, next
+        async.each files, (file, next)=>
+          cons.swig "#{tempApp}/#{file}",
+            'app'       : app
+            'appLower'  : appLower
+            'appCap'    : appCap
+            'appCapOne' : appCapOne
+            'user'      : @user
+            'userLower' : userLower
+            'userCap'   : userCap
+          , (err, result)->
+            fs.writeFile "#{tempApp}/#{file}", result, next
         , (err)->
           if err
             fs.removeSync tempApp

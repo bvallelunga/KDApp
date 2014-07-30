@@ -1,4 +1,4 @@
-@@ac
+{{ appCap }}
 -----------
 
-Yet another awesome Koding application! by @@u
+Yet another awesome Koding application! by {{ user }}
