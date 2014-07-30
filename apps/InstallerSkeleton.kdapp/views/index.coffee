@@ -47,21 +47,24 @@ class @@acMainView extends KDView
       cssClass      : 'button green solid hidden'
       callback      : =>
         @passwordModal no, (password)=> 
-          @Installer.command INSTALL, password
+          if password?
+            @Installer.command INSTALL, password
       
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
       cssClass      : 'button solid hidden'
       callback      : =>
         @passwordModal no, (password)=> 
-          @Installer.command REINSTALL, password
+          if password?
+            @Installer.command REINSTALL, password
         
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
       cssClass      : 'button red solid hidden'
       callback      : =>
         @passwordModal no, (password)=> 
-          @Installer.command UNINSTALL, password
+          if password?
+            @Installer.command UNINSTALL, password
 
     @container.addSubView new KDCustomHTMLView
       cssClass : "description"
@@ -95,7 +98,8 @@ class @@acMainView extends KDView
       when WRONG_PASSWORD
         @Installer.state = @Installer.lastState
         @passwordModal yes, (password)=>
-          @Installer.command @Installer.lastCommand, password
+          if password?
+            @Installer.command @Installer.lastCommand, password
       else
         @updateProgress message, percentage
           
@@ -117,7 +121,7 @@ class @@acMainView extends KDView
         cancel        : =>
           @modal.destroy()
           delete @modal
-          cb ""
+          cb()
         tabs                    :
           navigable             : yes
           callback              : (form)=> 

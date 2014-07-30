@@ -13,9 +13,9 @@ github                  = "https://rest.kd.io/@@u/@@al.kdapp/master"            
 logo                    = "#{github}/resources/logo.png"                            # The main logo centered at the top of the app
 launchURL               = "https://#{domain}/#{app}/"                               # The url used after the app is configured
 configureURL            = "https://#{domain}/#{app}/install"                        # The url used to configure app
-installChecker          = "/home/#{user}/Web/#{app}"                                # Path used to check if the app is instaled
+installChecker          = "/home/#{user}/Web/#{app}/"                               # Path used to check if the app is instaled
 configuredChecker       = "/home/#{user}/Web/#{app}/config.inc.php"                 # Path used to check if app is configured (can be set to "false")
-logger                  = "/tmp/_#{appName}Installer.out/#{session}"                # Path used to log installer progress
+logger                  = "/tmp/_#{appName}Installer.out/#{session}/"               # Path used to log installer progress
 description             =                                                           # The main description centered under the progress bar
 """
 <p>
