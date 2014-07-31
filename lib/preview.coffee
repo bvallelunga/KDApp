@@ -1,7 +1,7 @@
 fs            = require 'fs-extra'
 googl         = require 'goo.gl'
 watch         = require 'node-watch'
-Exec          = require('child_process')
+Exec          = require 'child_process'
 EventEmitter  = require('events').EventEmitter
 
 class Preview extends EventEmitter

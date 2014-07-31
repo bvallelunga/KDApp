@@ -1,7 +1,10 @@
 fs        = require 'fs-extra'
-cons      = require('consolidate');
+cons      = require 'consolidate'
+read      = require 'read'
 async     = require 'async'
 googl     = require 'goo.gl'
+request   = require 'request'
+Exec      = require 'child_process'
 
 class Create
   constructor: (user, type, app, path, root) ->
@@ -87,16 +90,44 @@ class Create
           else
             fs.move tempApp, destApp, (err)->
               unless err
-                googl.shorten "https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line"
-                  .then (shortUrl)->
-                    console.log """
-                    Your new project is called: #{appCap}.kdapp
-                    
-                    Please commit your files before testing. Koding apps pull
-                    the assets (images and scripts) from your repository.
-                    
-                    Follow this guide: #{shortUrl}
-                    """
+                async.series
+                  user: (next)->
+                    read prompt:
+                      "Github username: "
+                    , next
+                  pass: (next)->
+                    read
+                      prompt: "Github password: "
+                      silent: true
+                      replace: "*"
+                    , next
+                  , (err, credentials)->
+                    request
+                      url: "https://api.github.com/user/repos"
+                      method: "POST"
+                      headers:
+                        "User-Agent": "Koding KDApp CLI"
+                      json:
+                        name: "#{appCap}.kdapp"
+                      auth:
+                        user: credentials.user[0]
+                        pass: credentials.pass[0]
+                    , (err, res, body)->
+                      Exec.exec """
+                        cd #{destApp};
+                        git init;
+                        git add .;
+                        git commit -m "First Commit";
+                        git remote add origin #{body.ssh_url};
+                        git push origin master;
+                      """
+                      
+                      console.log """
+                      Your new project is called: #{appCap}.kdapp
+                      
+                      A repository on github has been created and your
+                      files have been pushed to the remote repo.
+                      """
               else
                 fs.removeSync tempApp
                 console.log "Failed to create #{appCap}.kdapp"
