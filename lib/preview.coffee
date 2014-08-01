@@ -19,38 +19,41 @@ class Preview extends EventEmitter
       ln -s --force #{@lib.path}/index.js #{@appFolder}/index.js
       ln -s --force #{@lib.path}/resources/style.css #{@appFolder}/style.css
     """, (err)=>
-      unless err
-        @emit "compile"
-        previewUrl = encodeURIComponent "#{@lib.previewUrl}?app=#{@manifest.name}"
-        redirectUrl = "https://#{@lib.user}.kd.io/#{@manifest.name}.kdapp/?next=#{previewUrl}"
+      if err
+        @lib.winston.error err
+        return console.log "Failed to start app server"
 
-        googl.shorten redirectUrl
-          .then (shortUrl)->
-            console.log """
+      @emit "compile"
+      previewUrl = encodeURIComponent "#{@lib.previewUrl}?app=#{@manifest.name}"
+      redirectUrl = "https://#{@lib.user}.kd.io/#{@manifest.name}.kdapp/?next=#{previewUrl}"
 
-            Starting app server...
-            Listening on #{shortUrl}
+      googl.shorten redirectUrl
+        .then (shortUrl)->
+          console.log """
 
-            ctrl-c to stop the server
+          Starting app server...
+          Listening on #{shortUrl}
 
-            """
+          ctrl-c to stop the server
 
-        stdin = process.stdin
-        stdin.setRawMode true
-        stdin.resume()
-        stdin.setEncoding( 'utf8' );
+          """
 
-        stdin.on 'data', (key)=>
-          if key is '\u0003'
-            Exec.exec "rm -r --force #{@appFolder}", process.exit
-          process.stdout.write key
+      stdin = process.stdin
+      stdin.setRawMode true
+      stdin.resume()
+      stdin.setEncoding( 'utf8' );
 
-        cb()
-      else
-        console.log "Failed to start app server"
+      stdin.on 'data', (key)=>
+        if key is '\u0003'
+          Exec.exec "rm -r --force #{@appFolder}", process.exit
+        process.stdout.write key
+
+      cb()
 
   watch: (compile)->
-    excludeFiles = ["#{@lib.path}/index.js", "#{@lib.path}/resources/style.css"]
+    excludeFiles = [
+      "#{@lib.path}/index.js", "#{@lib.path}/resources/style.css"
+    ]
 
     watch @lib.path,
       recursive: true

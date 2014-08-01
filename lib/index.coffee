@@ -2,6 +2,7 @@ fs        = require 'fs-extra'
 path      = require 'path'
 os        = require 'os'
 googl     = require 'goo.gl'
+async     = require 'async'
 winston   = require 'winston'
 Coffee    = require './coffee'
 Less      = require './less'
@@ -47,13 +48,19 @@ class Lib
     create.app()
 
   compile: (type)->
-    if type
-      switch type
-        when "coffee" then Coffee @
-        when "less" then Less @ yes
-    else
-      Coffee @
-      Less @
+    switch type
+      when "coffee" then funcs = [Coffee]
+      when "less" then funcs = [Less]
+      else funcs = [Coffee, Less]
+
+    async.each funcs, (func, next)=>
+      func @, next
+    , (err)=>
+      if err
+        console.log err
+        return @winston.error err
+
+      console.log "Compiled successfully"
 
   publish: (env, options)->
     # Use to check if app exists

@@ -35,7 +35,7 @@ compileDebug = (path, source, error)->
   #{next_line}
   """
 
-module.exports = (lib)->
+module.exports = (lib, cb)->
   appPath     = lib.path
   manifest    = lib.getManifest()
   [bin, file] = process.argv
@@ -43,12 +43,10 @@ module.exports = (lib)->
   source      = ""
 
   unless files
-    console.log "The object 'source.blocks.app.files' is not found in manifest file."
-    process.exit 3
+    return cb "The object in the manifest, 'source.blocks.app.files' was not found"
 
   unless Array.isArray files
-    console.log "The object 'source.blocks.app.files' must be array in manifest file."
-    process.exit 3
+    return cb "The object in the manifest, 'source.blocks.app.files' must be an array"
 
   for file in files
     file = path.normalize (path.join appPath, file)  if appPath
@@ -57,21 +55,19 @@ module.exports = (lib)->
       if fs.existsSync file
         data = fs.readFileSync file
       else
-        console.log "The required file not found: #{file}"
-        process.exit 34
+        return cb "The required file was not found: #{file}"
       try
         compiled = coffee.compile data.toString(), bare: true
       catch error
-        console.log "Compile Error: #{error.message}"
-        console.log compileDebug(file, data, error)
-        process.exit 4
-
+        return cb """
+        Compile Error: #{error.message}
+        #{compileDebug file, data, error}
+        """
     else if /\.js/.test file
       if fs.existsSync file
         compiled = fs.readFileSync(file).toString()
       else
-        console.log "The required file not found: #{file}"
-        process.exit 34
+        return cb "The required file was not found: #{file}"
 
     block = """
     /* BLOCK STARTS: #{file} */
@@ -92,4 +88,4 @@ module.exports = (lib)->
   }).call();
   """
   fs.writeFileSync (path.join appPath, "index.js"), mainSource
-  console.log "Compiled successfully"
+  cb()
