@@ -4,6 +4,7 @@ os        = require 'os'
 googl     = require 'goo.gl'
 async     = require 'async'
 winston   = require 'winston'
+
 Coffee    = require './coffee'
 Less      = require './less'
 Preview   = require './preview'
@@ -93,4 +94,4 @@ class Lib
   help: ->
     @program.help()
 
-module.exports = (options) -> new Lib options
+module.exports = Lib

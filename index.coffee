@@ -3,7 +3,9 @@
 config          = require './package.json'
 program         = require 'commander'
 program._name   = config.name
-lib             = require('./lib') config, program
+
+Lib             = require('./lib')
+lib             = new Lib config, program
 
 program
   .version config.version
