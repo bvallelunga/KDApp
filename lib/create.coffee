@@ -6,10 +6,8 @@ request   = require 'request'
 Exec      = require 'child_process'
 
 class Create
-  constructor: (user, type, app, path, root) ->
-    @user      = user
-    @path      = path
-    @root      = root
+  constructor: (lib, type, app) ->
+    @lib       = lib
     @appName   = app
     @type      = type
 
@@ -21,14 +19,12 @@ class Create
     else
       string = string[0].toUpperCase() + string[1..-1].toLowerCase()
 
-    return string
-
   nameify: (string)->
-    return string.replace(' ', '')
+    string.replace ' ', ''
 
   inApplicationsFolder: ->
-    pathArray = @path.split("/")
-    return pathArray[pathArray.length - 1] is "Applications"
+    pathArray = @lib.path.split("/")
+    pathArray[pathArray.length - 1] is "Applications"
 
   app: ->
     unless @inApplicationsFolder()
@@ -40,7 +36,13 @@ class Create
 
     switch @type
       when "basic" then skelAppName = "Skeleton"
-      when "installer" then skelAppName = "InstallerSkeleton"
+      when "installer"
+        skelAppName = "InstallerSkeleton"
+        additionalFiles = [
+          "config.coffee", "views/index.coffee",
+          "less/style.less", "controllers/installer.coffee"
+        ]
+
       else return console.log """
       Unknown template type: #{@type}
 
@@ -52,18 +54,22 @@ class Create
     appLower  = @nameify @appName.toLowerCase()
     appCap    = @nameify @capitalize @appName
     appCapOne = @nameify @capitalize @appName, yes
-    userLower = @user.toLowerCase()
-    userCap   = @capitalize @user
-    skelApp   = "#{@root}/apps/#{skelAppName}.kdapp"
+    userLower = @lib.user.toLowerCase()
+    userCap   = @capitalize @lib.user
+    skelApp   = "#{@lib.root}/apps/#{skelAppName}.kdapp"
     tempApp   = "/tmp/#{appCap}.kdapp"
-    destApp   = "#{@path}/#{appCap}.kdapp"
+    destApp   = "#{@lib.path}/#{appCap}.kdapp"
 
     # Get Github Credentials
     async.series
       user: (next)->
-        read prompt:
-          "Github username: "
-        , next
+        Exec.exec "git config --global user.username", (err, username)->
+          if not err and username
+            next err, [username.replace("\n", "")]
+          else
+            read prompt:
+              "Github username: "
+            , next
       pass: (next)->
         read
           prompt: "Github password: "
@@ -71,79 +77,84 @@ class Create
           replace: "*"
         , next
       , (err, credentials)=>
-
-        # Create Empty Github Repo
-        request
-          url: "https://api.github.com/user/repos"
-          method: "POST"
-          headers:
-            "User-Agent": "Koding KDApp CLI"
-          json:
-            name: "#{appCap}.kdapp"
-          auth:
-            user: credentials.user[0]
-            pass: credentials.pass[0]
-        , (err, res, body)=>
-          if body.message is "Bad credentials"
-            console.log "Invalid Github credentials"
-            return @app()
-          else if err
-            return console.log "Failed to create #{appCap}.kdapp"
-
-          # Copy Template to Temp
-          fs.copy skelApp, tempApp, (err)=>
-            if err
+        if not err and credentials
+          # Create Empty Github Repo
+          request
+            url: "https://api.github.com/user/repos"
+            method: "POST"
+            headers:
+              "User-Agent": "Koding KDApp CLI"
+            json:
+              name: "#{appCap}.kdapp"
+            auth:
+              user: credentials.user[0]
+              pass: credentials.pass[0]
+          , (err, res, body)=>
+            if body.message is "Bad credentials"
+              console.log "Invalid Github credentials"
+              return @app()
+            else if err
+              @lib.winston.error err
               return console.log "Failed to create #{appCap}.kdapp"
 
-            files = [
-              "ChangeLog", "README.md", "index.coffee",
-              "manifest.json", "resources/style.css"
-            ]
+            # Copy Template to Temp
+            fs.copy skelApp, tempApp, (err)=>
+              if err
+                @lib.winston.error err
+                return console.log "Failed to create #{appCap}.kdapp"
 
-            if @type is "installer"
-              files = files.concat [
-                "config.coffee", "views/index.coffee",
-                "less/style.less", "controllers/installer.coffee"
+              files = [
+                "ChangeLog", "README.md", "index.coffee",
+                "manifest.json", "resources/style.css"
               ]
 
-            # Apply Variables to Template
-            async.each files, (file, next)=>
-              cons.swig "#{tempApp}/#{file}",
-                'app'       : app
-                'appLower'  : appLower
-                'appCap'    : appCap
-                'appCapOne' : appCapOne
-                'user'      : @user
-                'userLower' : userLower
-                'userCap'   : userCap
-              , (err, result)->
-                fs.writeFile "#{tempApp}/#{file}", result, next
-            , (err)->
-              if err
-                console.log "Failed to create #{appCap}.kdapp"
-                return fs.removeSync tempApp
+              if additionalFiles?
+                files = files.concat additionalFiles
 
-              # Move Template to Destination
-              fs.move tempApp, destApp, (err)->
+              # Apply Variables to Template
+              async.each files, (file, next)=>
+                cons.swig "#{tempApp}/#{file}",
+                  'app'       : app
+                  'appLower'  : appLower
+                  'appCap'    : appCap
+                  'appCapOne' : appCapOne
+                  'user'      : @user
+                  'userLower' : userLower
+                  'userCap'   : userCap
+                , (err, result)->
+                  fs.writeFile "#{tempApp}/#{file}", result, next
+              , (err)->
                 if err
+                  @lib.winston.error err
                   console.log "Failed to create #{appCap}.kdapp"
                   return fs.removeSync tempApp
 
-                # Init Repo and Make First Commit
-                Exec.exec """
-                  cd #{destApp};
-                  git init;
-                  git add .;
-                  git commit -m "First Commit";
-                  git remote add origin #{body.ssh_url};
-                  git push origin master;
-                """, ->
-                    console.log """
+                # Move Template to Destination
+                fs.move tempApp, destApp, (err)->
+                  if err
+                    @lib.winston.error err
+                    console.log "Failed to create #{appCap}.kdapp"
+                    return fs.removeSync tempApp
 
-                    Your new project is called: #{appCap}.kdapp
+                  # Init Repo and Make First Commit
+                  Exec.exec """
+                    git config --global user.username #{credentials.user[0]}
+                    cd #{destApp};
+                    git init;
+                    git add .;
+                    git commit -m "First Commit";
+                    git remote add origin #{body.ssh_url};
+                    git push origin master;
+                  """, ->
+                      console.log """
 
-                    A repository on github has been created and your
-                    files have been pushed to the remote repo.
-                  """
+                      Your new project is called: #{appCap}.kdapp
+
+                      A repository on github has been created and your
+                      files have been pushed to the remote repo.
+                    """
+        else
+          # Move prompt to new line
+          console.log ""
 
 module.exports = Create

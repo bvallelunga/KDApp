@@ -4,7 +4,7 @@
   "author": "Brian Vallelunga <vallelungabrian@gmail.com>",
   "version": "0.1.2",
   "private": false,
-  "production": false, 
+  "production": false,
   "dependencies": {
     "commander": "2.2.0",
     "fs-extra": "0.10.0",
@@ -15,10 +15,11 @@
     "node-watch": "0.3.4",
     "goo.gl": "0.1.0",
     "read": "1.0.5",
-    "request": "2.39.0"
+    "request": "2.39.0",
+    "winston": "0.7.3"
   },
-  "scripts": { 
-    "postinstall": "sudo npm install -g coffee-script" 
+  "scripts": {
+    "postinstall": "sudo npm install -g coffee-script"
   },
   "keywords": [
         "cli",

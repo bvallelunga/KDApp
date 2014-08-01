@@ -35,11 +35,13 @@ compileDebug = (path, source, error)->
   #{next_line}
   """
 
-module.exports = (manifest, appPath)->
-
+module.exports = (lib)->
+  appPath     = lib.path
+  manifest    = lib.getManifest()
   [bin, file] = process.argv
+  files       = manifest?.source?.blocks?.app?.files
+  source      = ""
 
-  files = manifest?.source?.blocks?.app?.files
   unless files
     console.log "The object 'source.blocks.app.files' is not found in manifest file."
     process.exit 3
@@ -47,8 +49,6 @@ module.exports = (manifest, appPath)->
   unless Array.isArray files
     console.log "The object 'source.blocks.app.files' must be array in manifest file."
     process.exit 3
-
-  source = ""
 
   for file in files
     file = path.normalize (path.join appPath, file)  if appPath

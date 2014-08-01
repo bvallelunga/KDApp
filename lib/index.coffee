@@ -2,24 +2,29 @@ fs        = require 'fs-extra'
 path      = require 'path'
 os        = require 'os'
 googl     = require 'goo.gl'
+winston   = require 'winston'
 Coffee    = require './coffee'
 Less      = require './less'
 Preview   = require './preview'
 Create    = require './create'
 
 class Lib
-  constructor: (config, program) ->
+  constructor: (config, program)->
     @program  = program
     @path     = process.env.PWD
     @user     = process.env.LOGNAME
     @root     = path.resolve __dirname, '..'
     @hostname = os.hostname()
-    
+    @winston  = winston
+
+    @winston.add @winston.transports.File, filename: "/tmp/kdapp.log"
+    @winston.remove @winston.transports.Console
+
     if config.production
       @previewUrl  = "https://koding.com/Preview"
     else
       @previewUrl  = "https://koding.com/bvallelunga/Apps/Preview"
-    
+
   getManifest: ->
     manifestPath = "#{@path}/manifest.json"
 
@@ -31,27 +36,25 @@ class Lib
       else
         console.log "Manifest file seems corrupted: #{manifestPath}"
       process.exit error.errno or 3
-      
-  create: (type, app, options) ->
+
+  create: (type, app, options)->
     if not app and type
       [app, type] = [type, 'basic']
     else unless app and type
       return @help()
-    
-    create = new Create @user, type, app, @path, @root
+
+    create = new Create @, type, app
     create.app()
-  
+
   compile: (type)->
-    manifest = @getManifest()
-    
     if type
       switch type
-        when "coffee" then Coffee manifest, @path
-        when "less" then Less manifest, @path, yes
-    else 
-      Coffee manifest, @path
-      Less manifest, @path
-  
+        when "coffee" then Coffee @
+        when "less" then Less @ yes
+    else
+      Coffee @
+      Less @
+
   publish: (env, options)->
     # Use to check if app exists
     @getManifest()
@@ -60,7 +63,7 @@ class Lib
       publishMode = "production"
       console.log """
       Please make sure all changes have been pushed to github.
-      
+
       """
     else
       publishMode = "test"
@@ -68,20 +71,19 @@ class Lib
     googl.shorten "#{@previewUrl}?publish=#{publishMode}&hostname=#{@hostname}&path=#{@path}"
       .then (shortUrl)->
         console.log "To finish publishing: #{shortUrl}"
-      
+
       .catch (err)->
         console.error err.message
- 
+
   preview: (options)->
-    manifest = @getManifest()
-    preview  = new Preview manifest, @user, @path, @root, @previewUrl
-    
+    preview  = new Preview @
+
     @compile()
     preview.start =>
       preview.watch() if options.watch
-      preview.on "compile", @compile.bind @ 
-  
-  help: ()->
+      preview.on "compile", @compile.bind @
+
+  help: ->
     @program.help()
-  
+
 module.exports = (options) -> new Lib options
