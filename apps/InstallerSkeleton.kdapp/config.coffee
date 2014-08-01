@@ -8,8 +8,8 @@ session                 = (Math.random() + 1).toString(36).substring 7
 
 # Configure App Here
 app                     = "{{ appLower }}"                                             # App name used for variables
-appName                 = "{{ appCap }}"                                               # App name used for titles and statuses            
-github                  = "https://rest.kd.io/{{ user }}/{{ appLower }}.kdapp/master"  # Git repository on the master branch
+appName                 = "{{ appCap }}"                                               # App name used for titles and statuses
+github                  = "https://rest.kd.io/{{ user }}/{{ appCap }}.kdapp/master"    # Git repository on the master branch
 logo                    = "#{github}/resources/logo.png"                               # The main logo centered at the top of the app
 launchURL               = "https://#{domain}/#{app}/"                                  # The url used after the app is configured
 configureURL            = "https://#{domain}/#{app}/install"                           # The url used to configure app
@@ -32,6 +32,6 @@ description             =                                                       
   <div class="center bold">Welcome to {{ app }} Installer App!</div>
 </p>
 """
-  
-  
+
+
 # Addition Configuration Variables Here

@@ -54,6 +54,7 @@ class Create
     appLower  = @nameify @appName.toLowerCase()
     appCap    = @nameify @capitalize @appName
     appCapOne = @nameify @capitalize @appName, yes
+    user      = @lib.user
     userLower = @lib.user.toLowerCase()
     userCap   = @capitalize @lib.user
     skelApp   = "#{@lib.root}/apps/#{skelAppName}.kdapp"
@@ -85,7 +86,9 @@ class Create
             headers:
               "User-Agent": "Koding KDApp CLI"
             json:
-              name: "#{appCap}.kdapp"
+              name        : "#{appCap}.kdapp"
+              description : "Koding app created from a template."
+              homepage    : "https://koding.com/Apps/#{user}/#{appCapOne}"
             auth:
               user: credentials.user[0]
               pass: credentials.pass[0]
@@ -118,7 +121,7 @@ class Create
                   'appLower'  : appLower
                   'appCap'    : appCap
                   'appCapOne' : appCapOne
-                  'user'      : @user
+                  'user'      : user
                   'userLower' : userLower
                   'userCap'   : userCap
                 , (err, result)->
