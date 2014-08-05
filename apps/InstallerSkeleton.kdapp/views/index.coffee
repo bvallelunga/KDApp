@@ -45,17 +45,32 @@ class {{ appCap }}MainView extends KDView
     @buttonContainer.addSubView @installButton = new KDButtonView
       title         : "Install #{appName}"
       cssClass      : 'button green solid hidden'
-      callback      : => @commitCommand INSTALL
+      loader        :
+          color     : "#FFFFFF"
+          diameter  : 12
+      callback      : =>  
+        @commitCommand INSTALL; 
+        @installButton.showLoader()
       
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
       cssClass      : 'button solid hidden'
-      callback      : => @commitCommand REINSTALL
+      loader        :
+          color     : "#FFFFFF"
+          diameter  : 12
+      callback      : => 
+        @commitCommand REINSTALL
+        @reinstallButton.showLoader()
         
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
       cssClass      : 'button red solid hidden'
-      callback      : => @commitCommand UNINSTALL
+      loader        :
+          color     : "#FFFFFF"
+          diameter  : 12
+      callback      : => 
+        @commitCommand UNINSTALL
+        @uninstallButton.showLoader()
 
     @container.addSubView new KDCustomHTMLView
       cssClass : "description"
@@ -74,10 +89,13 @@ class {{ appCap }}MainView extends KDView
     switch @Installer.state
       when NOT_INSTALLED 
         @installButton.show()
+        @reinstallButton.hideLoader()
+        @uninstallButton.hideLoader()
         @updateProgress message, percentage
       when INSTALLED
         @reinstallButton.show()
         @uninstallButton.show()
+        @installButton.hideLoader()
         @link.setSession()
         @updateProgress message, percentage
       when WORKING
