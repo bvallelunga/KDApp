@@ -96,7 +96,7 @@ class Create
             if body.message is "Bad credentials"
               console.log "Invalid Github credentials"
               return @app()
-            else if err
+            else if err or body.errors?
               @lib.winston.error err
               return console.log "Failed to create #{appCapOne}.kdapp"
 
@@ -138,7 +138,9 @@ class Create
                     @lib.winston.error err
                     console.log "Failed to create #{appCapOne}.kdapp"
                     return fs.removeSync tempApp
-
+                  
+                  console.log body
+                  
                   # Init Repo and Make First Commit
                   Exec.exec """
                     git config --global user.username #{credentials.user[0]}
@@ -149,6 +151,8 @@ class Create
                     git remote add origin #{body.ssh_url};
                     git push origin master;
                   """, (err)=>
+                      console.log err
+                    
                       if err
                         @lib.winston.error err
                         return console.log "Failed to create #{appCapOne}.kdapp"
