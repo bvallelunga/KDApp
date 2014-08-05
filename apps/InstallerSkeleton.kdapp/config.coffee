@@ -23,7 +23,7 @@ scripts                 =                                                       
   reinstall :
     url     : "#{github}/scripts/reinstall.sh"
     sudo    : true
-  uninstal  :
+  uninstall :
     url     : "#{github}/scripts/uninstall.sh"
     sudo    : false
 description             =                                                              # The main description centered under the progress bar
