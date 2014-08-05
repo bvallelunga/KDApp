@@ -126,7 +126,7 @@ class Create
                   'userCap'   : userCap
                 , (err, result)->
                   fs.writeFile "#{tempApp}/#{file}", result, next
-              , (err)->
+              , (err)=>
                 if err
                   @lib.winston.error err
                   console.log "Failed to create #{appCapOne}.kdapp"
