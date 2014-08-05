@@ -57,6 +57,7 @@ class Create
     user      = @lib.user
     userLower = @lib.user.toLowerCase()
     userCap   = @capitalize @lib.user
+    github    = ""
     skelApp   = "#{@lib.root}/apps/#{skelAppName}.kdapp"
     tempApp   = "/tmp/#{appCapOne}.kdapp"
     destApp   = "#{@lib.path}/#{appCapOne}.kdapp"
@@ -99,7 +100,9 @@ class Create
             else if err or body.errors?
               @lib.winston.error err
               return console.log "Failed to create #{appCapOne}.kdapp"
-
+            else
+              github = credentials.user[0]
+                
             # Copy Template to Temp
             fs.copy skelApp, tempApp, (err)=>
               if err
@@ -123,7 +126,8 @@ class Create
                   'appCapOne' : appCapOne
                   'user'      : user
                   'userLower' : userLower
-                  'userCap'   : userCap
+                  'userCap'   : userCap,
+                  'github'    : github
                 , (err, result)->
                   fs.writeFile "#{tempApp}/#{file}", result, next
               , (err)=>

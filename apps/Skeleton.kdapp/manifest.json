@@ -7,7 +7,7 @@
   "identifier": "com.koding.apps.{{ appLower }}",
   "path": "~/Applications/{{ appCapOne }}",
   "homepage": "{{ userLower }}.kd.io/{{ appLower }}",
-  "repository": "git://github.com/{{ user }}/{{ appLower }}.kdapp.git",
+  "repository": "git://github.com/{{ github }}/{{ appLower }}.kdapp.git",
   "description": "{{ appCap }} : a Koding application created with the blank template.",
   "category": "web-app",
   "source": {
