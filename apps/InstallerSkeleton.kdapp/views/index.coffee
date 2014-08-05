@@ -1,7 +1,7 @@
 class {{ appCap }}MainView extends KDView
     
   constructor:(options = {}, data)->
-    options.cssClass = "#{appName}-installer main-view"
+    options.cssClass = "#{appCSS} main-view"
     @Installer = new {{ appCap }}InstallerController
     super options, data
   
