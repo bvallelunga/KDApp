@@ -5,9 +5,9 @@
   "title": "{{ app }}",
   "name": "{{ appCapOne }}",
   "identifier": "com.koding.apps.{{ appLower }}",
-  "path": "~/Applications/{{ appCap }}",
-  "homepage": "{{ userLower }}.kd.io/{{ appCap }}",
-  "repository": "git://github.com/{{ user }}/{{ appCap }}.kdapp.git",
+  "path": "~/Applications/{{ appCapOne }}",
+  "homepage": "{{ userLower }}.kd.io/{{ appLower }}",
+  "repository": "git://github.com/{{ user }}/{{ appLower }}.kdapp.git",
   "description": "{{ appCap }} : a Koding application created with the blank template.",
   "category": "web-app",
   "source": {

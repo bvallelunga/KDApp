@@ -20,7 +20,7 @@ class Create
       string = string[0].toUpperCase() + string[1..-1].toLowerCase()
 
   nameify: (string)->
-    string.replace ' ', ''
+    string.replace /\ /g, ''
 
   inApplicationsFolder: ->
     pathArray = @lib.path.split("/")
@@ -58,8 +58,8 @@ class Create
     userLower = @lib.user.toLowerCase()
     userCap   = @capitalize @lib.user
     skelApp   = "#{@lib.root}/apps/#{skelAppName}.kdapp"
-    tempApp   = "/tmp/#{appCap}.kdapp"
-    destApp   = "#{@lib.path}/#{appCap}.kdapp"
+    tempApp   = "/tmp/#{appCapOne}.kdapp"
+    destApp   = "#{@lib.path}/#{appCapOne}.kdapp"
 
     # Get Github Credentials
     async.series
@@ -86,7 +86,7 @@ class Create
             headers:
               "User-Agent": "Koding KDApp CLI"
             json:
-              name        : "#{appCap}.kdapp"
+              name        : "#{appCapOne}.kdapp"
               description : "Koding app created from a template."
               homepage    : "https://koding.com/Apps/#{user}/#{appCapOne}"
             auth:
@@ -98,13 +98,13 @@ class Create
               return @app()
             else if err
               @lib.winston.error err
-              return console.log "Failed to create #{appCap}.kdapp"
+              return console.log "Failed to create #{appCapOne}.kdapp"
 
             # Copy Template to Temp
             fs.copy skelApp, tempApp, (err)=>
               if err
                 @lib.winston.error err
-                return console.log "Failed to create #{appCap}.kdapp"
+                return console.log "Failed to create #{appCapOne}.kdapp"
 
               files = [
                 "ChangeLog", "README.md", "index.coffee",
@@ -129,14 +129,14 @@ class Create
               , (err)->
                 if err
                   @lib.winston.error err
-                  console.log "Failed to create #{appCap}.kdapp"
+                  console.log "Failed to create #{appCapOne}.kdapp"
                   return fs.removeSync tempApp
 
                 # Move Template to Destination
                 fs.move tempApp, destApp, (err)->
                   if err
                     @lib.winston.error err
-                    console.log "Failed to create #{appCap}.kdapp"
+                    console.log "Failed to create #{appCapOne}.kdapp"
                     return fs.removeSync tempApp
 
                   # Init Repo and Make First Commit
@@ -151,7 +151,7 @@ class Create
                   """, ->
                       console.log """
 
-                      Your new project is called: #{appCap}.kdapp
+                      Your new project is called: #{appCapOne}.kdapp
 
                       A repository on github has been created and your
                       files have been pushed to the remote repo.
