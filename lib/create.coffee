@@ -133,7 +133,7 @@ class Create
                   return fs.removeSync tempApp
 
                 # Move Template to Destination
-                fs.move tempApp, destApp, (err)->
+                fs.move tempApp, destApp, (err)=>
                   if err
                     @lib.winston.error err
                     console.log "Failed to create #{appCapOne}.kdapp"
