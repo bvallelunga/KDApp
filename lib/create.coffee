@@ -6,7 +6,7 @@ request   = require 'request'
 Exec      = require 'child_process'
 
 class Create
-  constructor: (lib, type, app) ->
+  constructor: (lib, type, app)->
     @lib       = lib
     @appName   = app
     @type      = type
@@ -115,7 +115,7 @@ class Create
                 files = files.concat additionalFiles
 
               # Apply Variables to Template
-              async.each files, (file, next)=>
+              async.each files, (file, next)->
                 cons.swig "#{tempApp}/#{file}",
                   'app'       : app
                   'appLower'  : appLower
@@ -148,7 +148,11 @@ class Create
                     git commit -m "First Commit";
                     git remote add origin #{body.ssh_url};
                     git push origin master;
-                  """, ->
+                  """, (err)=>
+                      if err
+                        @lib.winston.error err
+                        return console.log "Failed to create #{appCapOne}.kdapp"
+
                       console.log """
 
                       Your new project is called: #{appCapOne}.kdapp
