@@ -28,12 +28,13 @@ class {{ appCap }}MainView extends KDView
         .then (configured)=>
           url = unless configured then configureURL else launchURL
           
-          @link.updatePartial """
-            Click here to launch #{appName}: 
-            <a target='_blank' href='#{url}'>#{url}</a>
-          """
-          @link.show()
-        .catch (error)=>
+          if url 
+            @link.updatePartial """
+              Click here to launch #{appName}: 
+              <a target='_blank' href='#{url}'>#{url}</a>
+            """
+            @link.show()
+          .catch (error)=>
           console.error error
           @link.updatePartial "Failed to check if #{appName} is configured."
           @link.show()
