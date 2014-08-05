@@ -2,7 +2,7 @@
   background: white;
 }
 
-.{{ appLower }} .welcome-view {
+.{{ appCap }} .welcome-view {
   background: #eee;
 
   height: auto;

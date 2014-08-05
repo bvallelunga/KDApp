@@ -1,7 +1,7 @@
 class {{ appCap }}MainView extends KDView
 
   constructor:(options = {}, data)->
-    options.cssClass = '{{ appLower }} main-view'
+    options.cssClass = '{{ appCap }} main-view'
     super options, data
 
   viewAppended:->
