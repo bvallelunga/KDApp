@@ -13,7 +13,7 @@ appCSS                  = "{{ appCap }}-installer"                              
 github                  = "https://rest.kd.io/{{ github }}/{{ appCap }}.kdapp/master"  # Git repository on the master branch
 logo                    = "#{github}/resources/logo.png"                               # The main logo centered at the top of the app
 launchURL               = "https://#{domain}/#{app}/"                                  # The url used after the app is configured (can be set to "false")
-configureURL            = "https://#{domain}/#{app}/install"                           # The url used to configure app
+configureURL            = "https://#{domain}/#{app}/install"                           # The url used to configure app (can be set to "false")
 installChecker          = "/home/#{user}/Web/#{app}/"                                  # Path to check if the app is instaled
 configuredChecker       = "/home/#{user}/Web/#{app}/config.inc.php"                    # Path to check if configured after install (can be set to "false")
 logger                  = "/tmp/_{{ appCap }}.out/#{session}/"                         # Path to log installer progress
@@ -26,7 +26,7 @@ scripts                 =                                                       
     sudo    : true
   uninstall :
     url     : "#{github}/scripts/uninstall.sh"
-    sudo    : false
+    sudo    : true
 description             =                                                              # The main description centered under the progress bar
 """
 <p>

@@ -1,10 +1,10 @@
 class {{ appCap }}MainView extends KDView
-    
+
   constructor:(options = {}, data)->
     options.cssClass = "#{appCSS} main-view"
     @Installer = new {{ appCap }}InstallerController
     super options, data
-  
+
   viewAppended: ->
     @addSubView @container = new KDCustomHTMLView
       tagName       : 'div'
@@ -15,86 +15,86 @@ class {{ appCap }}MainView extends KDView
       cssClass      : 'logo'
       attributes    :
         src         : logo
-    
+
     @container.addSubView @progress = new KDProgressBarView
       initial       : 100
       title         : "Checking VM State..."
 
     @container.addSubView @link = new KDCustomHTMLView
       cssClass : 'hidden running-link'
-      
+
     @link.setSession = =>
       @Installer.isConfigured()
         .then (configured)=>
           url = unless configured then configureURL else launchURL
-          
-          if url 
+
+          if url
             @link.updatePartial """
-              Click here to launch #{appName}: 
+              Click here to launch #{appName}:
               <a target='_blank' href='#{url}'>#{url}</a>
             """
             @link.show()
-          .catch (error)=>
+        .catch (error)=>
           console.error error
           @link.updatePartial "Failed to check if #{appName} is configured."
           @link.show()
-    
+
     @container.addSubView @buttonContainer = new KDCustomHTMLView
       tagName       : 'div'
       cssClass      : 'button-container'
-    
+
     @buttonContainer.addSubView @installButton = new KDButtonView
       title         : "Install #{appName}"
       cssClass      : 'button green solid hidden'
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : =>  
-        @commitCommand INSTALL; 
+      callback      : =>
+        @commitCommand INSTALL;
         @installButton.showLoader()
-      
+
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
       cssClass      : 'button solid hidden'
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : => 
+      callback      : =>
         @commitCommand REINSTALL
         @reinstallButton.showLoader()
-        
+
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
       cssClass      : 'button red solid hidden'
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : => 
+      callback      : =>
         @commitCommand UNINSTALL
         @uninstallButton.showLoader()
 
     @container.addSubView new KDCustomHTMLView
       cssClass : "description"
       partial  : description
-    
+
     KD.utils.defer =>
       @Installer.on "status-update", @bound "statusUpdate"
       @Installer.init()
-    
+
   statusUpdate: (message, percentage)->
     percentage ?= 100
     element.hide() for element in [
       @installButton, @reinstallButton, @uninstallButton, @link
     ]
-    
+
     if percentage is 100
-      if @Installer.state in [NOT_INSTALLED, INSTALLED, FAILED] 
+      if @Installer.state in [NOT_INSTALLED, INSTALLED, FAILED]
         element.hideLoader() for element in [
           @installButton, @reinstallButton, @uninstallButton
         ]
-    
+
     switch @Installer.state
-      when NOT_INSTALLED 
+      when NOT_INSTALLED
         @installButton.show()
         @updateProgress message, percentage
       when INSTALLED
@@ -114,27 +114,27 @@ class {{ appCap }}MainView extends KDView
           @Installer.command @Installer.lastCommand, password if password?
       else
         @updateProgress message, percentage
-  
+
   commitCommand: (command)->
     switch command
       when INSTALL then name = "install"
       when REINSTALL then name = "reinstall"
       when UNINSTALL then name = "uninstall"
       else return throw "Command not registered."
-  
+
     if scripts[name].sudo
-      @passwordModal no, (password)=> 
+      @passwordModal no, (password)=>
         @Installer.command command, password if password?
     else
       @Installer.command command
-  
+
   passwordModal: (error, cb)->
     unless @modal
       unless error
         title = "#{appName} needs sudo access to continue"
       else
         title = "Incorrect password, please try again"
-    
+
       @modal = new KDModalViewWithForms
         title         : title
         overlay       : yes
@@ -148,7 +148,7 @@ class {{ appCap }}MainView extends KDView
           cb()
         tabs                    :
           navigable             : yes
-          callback              : (form)=> 
+          callback              : (form)=>
             @modal.destroy()
             delete @modal
             cb form.password
