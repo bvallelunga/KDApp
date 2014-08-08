@@ -133,6 +133,7 @@ class Create
                   'userCap'   : userCap,
                   'github'    : github
                 , (err, result)->
+                  return next err if err?
                   fs.writeFile "#{tempApp}/#{file}", result, next
               , (err)=>
                 if err
