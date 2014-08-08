@@ -2,35 +2,35 @@
   width: 100%;
   height: 100%%;
   overflow: auto;
-  
+
   .container {
     width: 600px;
-    margin: 50px auto 20px auto;  
+    margin: 50px auto 20px auto;
     overflow: visible;
-  
+
     .progressbar-container {
-      height: 40px; 
+      height: 40px;
       margin: 10px 0 0 0;
       height: 30px;
       border: none;
       .border-radius(3px);
-      
+
       & > .dark-label {
         font-size: 14px;
         top: 8px;
         left: 8px;
         text-align: left;
       }
-      
+
       span,
       .bar span {
         text-shadow: none !important;
       }
-    
+
       .bar {
         background:#1AAF5D;
         border-radius:0;
-        
+
         & > .light-label {
           font-size: 14px;
           top: 8px;
@@ -40,7 +40,7 @@
         }
       }
     }
-    
+
     .toggle-button {
       position: absolute;
       top: 253px;
@@ -48,12 +48,12 @@
       z-index: 4;
       height: 28px;
       width: 100px;
-      
+
       & > .button-title {
-        font-size: 12px; 
+        font-size: 12px;
       }
     }
-    
+
     .logo {
       width: 200px;
       left: 50%;
@@ -61,44 +61,49 @@
       margin-left: -110px;
       margin-top: 20px;
     }
-    
+
     .button-container {
       text-align: center;
-      
+
       .button {
         margin: 15px;
+        height: 45px;
+
+        & span {
+          line-height: normal;
+        }
       }
     }
-    
+
     .description {
       color: #333;
       font-size: 16px;
       line-height: 1.7em;
       color: #555;
-    
+
       p {
         padding: 10px 0;
       }
-    
+
       a {
         text-decoration: underline;
-        color: black; 
+        color: black;
       }
-    
+
       b, .bold {
         text-decoration: none;
         font-weight: bold;
       }
-      
+
       .center {
         text-align: center;
       }
-      
+
       img {
         width: 100%;
       }
     }
-    
+
     .running-link {
       text-align: center;
       padding: 12px 0;
@@ -107,16 +112,16 @@
       background: #eee;
       margin-bottom: 15px;
       line-height: 22px;
-    
+
       a {
         text-decoration: none;
         color: blue;
         text-shadow: none;
       }
     }
-    
+
     .picture {
-      width: 800px; 
+      width: 800px;
     }
   }
 }
