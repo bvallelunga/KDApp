@@ -35,9 +35,9 @@ class {{ appCap }}MainView extends KDView
             """
             @link.show()
         .catch (error)=>
-          console.error error
           @link.updatePartial "Failed to check if #{appName} is configured."
           @link.show()
+          console.error error
 
     @container.addSubView @buttonContainer = new KDCustomHTMLView
       tagName       : 'div'
@@ -124,7 +124,10 @@ class {{ appCap }}MainView extends KDView
 
     if scripts[name].sudo
       @passwordModal no, (password)=>
-        @Installer.command command, password if password?
+        if password?
+          @Installer.command command, password
+        else
+          @["#{name}Button"].hideLoader()
     else
       @Installer.command command
 
