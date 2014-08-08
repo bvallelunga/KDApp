@@ -49,9 +49,7 @@ class {{ appCap }}MainView extends KDView
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : =>
-        @commitCommand INSTALL;
-        @installButton.showLoader()
+      callback      : => @commitCommand INSTALL
 
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
@@ -59,9 +57,7 @@ class {{ appCap }}MainView extends KDView
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : =>
-        @commitCommand REINSTALL
-        @reinstallButton.showLoader()
+      callback      : => @commitCommand REINSTALL
 
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
@@ -69,9 +65,7 @@ class {{ appCap }}MainView extends KDView
       loader        :
           color     : "#FFFFFF"
           diameter  : 12
-      callback      : =>
-        @commitCommand UNINSTALL
-        @uninstallButton.showLoader()
+      callback      : => @commitCommand UNINSTALL
 
     @container.addSubView new KDCustomHTMLView
       cssClass : "description"
@@ -83,13 +77,11 @@ class {{ appCap }}MainView extends KDView
 
   statusUpdate: (message, percentage)->
     percentage ?= 100
-    element.hide() for element in [
-      @installButton, @reinstallButton, @uninstallButton, @link
-    ]
+    @link.hide()
 
     if percentage is 100
       if @Installer.state in [NOT_INSTALLED, INSTALLED, FAILED]
-        element.hideLoader() for element in [
+        element.hide().hideLoader() for element in [
           @installButton, @reinstallButton, @uninstallButton
         ]
 
@@ -125,10 +117,10 @@ class {{ appCap }}MainView extends KDView
     if scripts[name].sudo
       @passwordModal no, (password)=>
         if password?
+          @["#{name}Button"].showLoader()
           @Installer.command command, password
-        else
-          @["#{name}Button"].hideLoader()
     else
+      @["#{name}Button"].showLoader()
       @Installer.command command
 
   passwordModal: (error, cb)->
