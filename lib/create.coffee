@@ -102,12 +102,12 @@ class Create
               return console.log "Failed to create #{appCapOne}.kdapp"
             else
               github = credentials.user[0]
-                
+
             # Copy Template to Temp
             fs.copy skelApp, tempApp, (err)=>
               if err
                 @lib.winston.error err
-                return console.log "Failed to create #{appCapOne}.kdapp"
+                return console.log "Failed to create #{appCapOne}.kdapp: #{err}"
 
               files = [
                 "ChangeLog", "README.md", "index.coffee",
@@ -133,7 +133,7 @@ class Create
               , (err)=>
                 if err
                   @lib.winston.error err
-                  console.log "Failed to create #{appCapOne}.kdapp"
+                  console.log "Failed to create #{appCapOne}.kdapp: #{err}"
                   return fs.removeSync tempApp
 
                 # Move Template to Destination
@@ -142,7 +142,7 @@ class Create
                     @lib.winston.error err
                     console.log "Failed to create #{appCapOne}.kdapp"
                     return fs.removeSync tempApp
-                    
+
                   # Init Repo and Make First Commit
                   Exec.exec """
                     git config --global user.username #{credentials.user[0]}
@@ -155,7 +155,7 @@ class Create
                   """, (err)=>
                       if err
                         @lib.winston.error err
-                        return console.log "Failed to create #{appCapOne}.kdapp"
+                        return console.log "Failed to create #{appCapOne}.kdapp: #{err}"
 
                       console.log """
 
