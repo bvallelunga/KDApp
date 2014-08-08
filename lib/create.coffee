@@ -26,6 +26,13 @@ class Create
     pathArray = @lib.path.split("/")
     pathArray[pathArray.length - 1] is "Applications"
 
+  failed: (err)->
+    @lib.winston.error err
+    return console.log """
+    Failed to create #{@nameify @capitalize @appName, yes}
+    #{err}
+    """
+
   app: ->
     unless @inApplicationsFolder()
       return console.log """
@@ -98,16 +105,13 @@ class Create
               console.log "Invalid Github credentials"
               return @app()
             else if err or body.errors?
-              @lib.winston.error err
-              return console.log "Failed to create #{appCapOne}.kdapp"
+              return @failed(err)
             else
               github = credentials.user[0]
 
             # Copy Template to Temp
             fs.copy skelApp, tempApp, (err)=>
-              if err
-                @lib.winston.error err
-                return console.log "Failed to create #{appCapOne}.kdapp: #{err}"
+              return @failed(err) if err
 
               files = [
                 "ChangeLog", "README.md", "index.coffee",
@@ -132,15 +136,13 @@ class Create
                   fs.writeFile "#{tempApp}/#{file}", result, next
               , (err)=>
                 if err
-                  @lib.winston.error err
-                  console.log "Failed to create #{appCapOne}.kdapp: #{err}"
+                  @failed(err)
                   return fs.removeSync tempApp
 
                 # Move Template to Destination
                 fs.move tempApp, destApp, (err)=>
                   if err
-                    @lib.winston.error err
-                    console.log "Failed to create #{appCapOne}.kdapp"
+                    @failed(err)
                     return fs.removeSync tempApp
 
                   # Init Repo and Make First Commit
@@ -153,9 +155,7 @@ class Create
                     git remote add origin #{body.ssh_url};
                     git push origin master;
                   """, (err)=>
-                      if err
-                        @lib.winston.error err
-                        return console.log "Failed to create #{appCapOne}.kdapp: #{err}"
+                      return @failed(err) if err
 
                       console.log """
 
