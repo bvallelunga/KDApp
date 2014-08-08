@@ -9,7 +9,6 @@ if [ $# -lt 2 ]
 else
   USER=$1
   OUT=$2
-  rm -rf $OUT/*
   mkdir -p $OUT
 fi
 
