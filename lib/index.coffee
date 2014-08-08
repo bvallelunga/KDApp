@@ -4,6 +4,7 @@ os        = require 'os'
 googl     = require 'goo.gl'
 async     = require 'async'
 winston   = require 'winston'
+Exec      = require 'child_process'
 
 Coffee    = require './coffee'
 Less      = require './less'
@@ -90,6 +91,14 @@ class Lib
     preview.start =>
       preview.watch() if options.watch
       preview.on "compile", @compile.bind @
+
+  update: ->
+    if config.production
+      command = "sudo npm install -g kdapp"
+    else
+      command = "sudo npm install -g  git+https://github.com/bvallelunga/KDApp.git"
+
+    Exec.exec command
 
   help: ->
     @program.help()

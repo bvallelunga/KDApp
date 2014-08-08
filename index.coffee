@@ -38,6 +38,11 @@ program
   .action lib.publish.bind lib
 
 program
+  .command 'update'
+  .description 'Update KDApp CLI'
+  .action lib.update.bind lib
+
+program
   .command 'help'
   .description 'Output help information'
   .action lib.help.bind lib
