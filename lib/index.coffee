@@ -13,6 +13,7 @@ Create    = require './create'
 
 class Lib
   constructor: (config, program)->
+    @config   = config
     @program  = program
     @path     = process.env.PWD
     @user     = process.env.LOGNAME
@@ -93,7 +94,7 @@ class Lib
       preview.on "compile", @compile.bind @
 
   update: ->
-    if config.production
+    if @config.production
       command = "sudo npm install -g kdapp"
     else
       command = "sudo npm install -g  git+https://github.com/bvallelunga/KDApp.git"
