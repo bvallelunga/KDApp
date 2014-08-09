@@ -3,6 +3,7 @@ cons      = require 'consolidate'
 read      = require 'read'
 async     = require 'async'
 request   = require 'request'
+util      = require 'util'
 Exec      = require 'child_process'
 
 class Create
@@ -30,7 +31,7 @@ class Create
     @lib.winston.error err
     return console.log """
     Failed to create #{@nameify @capitalize @appName, yes}
-    #{err}
+    #{util.inspect err}
     """
 
   app: ->
@@ -105,13 +106,13 @@ class Create
               console.log "Invalid Github credentials"
               return @app()
             else if err or body.errors?
-              return @failed(err)
+              return @failed err || body.errors
             else
               github = credentials.user[0]
 
             # Copy Template to Temp
             fs.copy skelApp, tempApp, (err)=>
-              return @failed(err) if err
+              return @failed err if err
 
               files = [
                 "ChangeLog", "README.md", "index.coffee",
@@ -143,7 +144,7 @@ class Create
                 # Move Template to Destination
                 fs.move tempApp, destApp, (err)=>
                   if err
-                    @failed(err)
+                    @failed err
                     return fs.removeSync tempApp
 
                   # Init Repo and Make First Commit
@@ -156,7 +157,7 @@ class Create
                     git remote add origin #{body.ssh_url};
                     git push origin master;
                   """, (err)=>
-                      return @failed(err) if err
+                      return @failed err if err
 
                       console.log """
 
