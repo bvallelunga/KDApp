@@ -39,7 +39,9 @@ class {{ appCap }}InstallerController extends KDController
     @watcher.watch()
 
     @kiteHelper.run
-      command: "curl -sL #{scripts[name].url} | bash -s #{user} #{logger}"
+      command: """"
+        curl -sL #{scripts[name].url} | bash -s #{user} #{logger}/#{getSession()} #{@mysqlPassword} > #{logger}/#{name}.out
+      """
       password: if scripts[name].sudo then password else null
     , (err, res)=>
       @watcher.stopWatching()
@@ -60,13 +62,13 @@ class {{ appCap }}InstallerController extends KDController
       unless err
         @watcher = new FSWatcher
           path : logger
-          recursive : no
+          recursive : yes
         @watcher.fileAdded = (change)=>
           {name} = change.file
           [percentage, status] = name.split '-'
-          @announce status, WORKING, percentage
+          @announce status, WORKING, percentage if percentage? and status?
       else
-        throw err
+        console.error err
 
   updateState: (state)->
     @lastState = @state

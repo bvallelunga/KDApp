@@ -4,7 +4,7 @@ FAILED, WRONG_PASSWORD, INSTALL,
 REINSTALL, UNINSTALL]   = [0..7]
 user                    = KD.nick()
 domain                  = "#{user}.kd.io"
-session                 = (Math.random() + 1).toString(36).substring 7
+session                 = -> (Math.random() + 1).toString(36).substring 7
 
 # Configure App Here
 app                     = "{{ appLower }}"                                             # App name used for variables
@@ -16,7 +16,7 @@ launchURL               = "https://#{domain}/#{app}/"                           
 configureURL            = "https://#{domain}/#{app}/install"                           # The url used to configure app (can be set to "false")
 installChecker          = "/home/#{user}/Web/#{app}/"                                  # Path to check if the app is instaled
 configuredChecker       = "/home/#{user}/Web/#{app}/config.inc.php"                    # Path to check if configured after install (can be set to "false")
-logger                  = "/tmp/_{{ appCap }}.out/#{session}/"                         # Path to log installer progress
+logger                  = "/tmp/_{{ appCap }}.out"                                     # Path to log installer progress
 scripts                 =                                                              # Scripts with url and if sudo access required
   install   :
     url     : "#{github}/scripts/install.sh"
