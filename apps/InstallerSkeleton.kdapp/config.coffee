@@ -4,7 +4,7 @@ FAILED, WRONG_PASSWORD, INSTALL,
 REINSTALL, UNINSTALL]   = [0..7]
 user                    = KD.nick()
 domain                  = "#{user}.kd.io"
-session                 = -> (Math.random() + 1).toString(36).substring 7
+getSession              = -> (Math.random() + 1).toString(36).substring 7
 
 # Configure App Here
 app                     = "{{ appLower }}"                                             # App name used for variables
