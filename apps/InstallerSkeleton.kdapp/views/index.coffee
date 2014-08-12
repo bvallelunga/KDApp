@@ -134,10 +134,8 @@ class {{ appCap }}MainView extends KDView
     if scripts[name].sudo
       @passwordModal no, (password)=>
         if password?
-          @["#{name}Button"].showLoader()
           @Installer.command command, password
     else
-      @["#{name}Button"].showLoader()
       @Installer.command command
 
   passwordModal: (error, cb)->
