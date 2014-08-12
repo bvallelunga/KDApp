@@ -1,7 +1,7 @@
 class KiteHelper extends KDController
-  
+
   vmIsStarting: false
-  
+
   getReady:->
     new Promise (resolve, reject) =>
       {JVM} = KD.remote.api
@@ -18,12 +18,12 @@ class KiteHelper extends KDController
           alias = vm.hostnameAlias
           @_kites[alias] = kiteController
             .getKite "os-#{ vm.region }", alias, 'os'
-        
+
         @emit 'ready'
         resolve()
 
   getVm:->
-    @_vm or= @_vms.first
+    @_vm or= @_vms.last
     return @_vm
 
   getKite:->
@@ -35,13 +35,13 @@ class KiteHelper extends KDController
         unless kite = @_kites[vm]
           return reject
             message: "No such kite for #{vm}"
-        
+
         vmController.info vm, (err, vmn, info)=>
           if not @vmIsStarting and info.state is "STOPPED"
             @vmIsStarting = true
             timeout = 10 * 60 * 1000
             kite.options.timeout = timeout
-            
+
             kite.vmOn().then ->
               resolve kite
             .timeout(timeout)
@@ -69,5 +69,5 @@ class KiteHelper extends KDController
         callback
           message : "Failed to run #{options.command}"
           details : err
-      else 
+      else
         console.error err

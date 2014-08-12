@@ -8,7 +8,7 @@ class {{ appCap }}InstallerController extends KDController
     super options, data
 
     @kiteHelper = new KiteHelper
-    @kiteHelper.ready @bound "configureWatcher"
+    @kiteHelper.ready @bound "watcherDirectory"
     @registerSingleton "{{ appLower }}InstallerController", this, yes
 
   announce:(message, state, percentage)->
@@ -27,48 +27,58 @@ class {{ appCap }}InstallerController extends KDController
             @announce "Failed to see if #{appName} is installed", FAILED
             throw err
 
-  command: (command, password)->
+  command: (command, password, data)->
     switch command
       when INSTALL then name = "install"
       when REINSTALL then name = "reinstall"
       when UNINSTALL then name = "uninstall"
-      else return throw "Command not registered."
+      else return console.error "Command not registered."
 
     @lastCommand = command
     @announce "#{@namify name}ing #{appName}...", null, 0
-    @watcher.watch()
+    session = getSession()
 
-    @kiteHelper.run
-      command: """"
-        curl -sL #{scripts[name].url} | bash -s #{user} #{logger}/#{getSession()} #{@mysqlPassword} > #{logger}/#{name}.out
-      """
-      password: if scripts[name].sudo then password else null
-    , (err, res)=>
-      @watcher.stopWatching()
+    @configureWatcher(session).then (watcher)=>
+      @kiteHelper.run
+        command: "curl -sL #{scripts[name].url} | bash -s #{user} #{logger}/#{session}/ #{@mysqlPassword} > #{logger}/#{name}.out"
+        password: if scripts[name].sudo then password else null
+      , (err, res)=>
+        watcher.stopWatching()
 
-      if not err and res.exitStatus is 0
-        @init()
-      else
-        if err and err.details.message is "Permissiond denied. Wrong password"
-          @announce "Your password was incorrect, please try again", WRONG_PASSWORD
+        if err? or res.exitStatus is not 0
+          if err.details?.message is "Permissiond denied. Wrong password"
+            @announce "Your password was incorrect, please try again", WRONG_PASSWORD
+          else
+            @announce "Failed to #{name}, please try again", FAILED
+            console.error err
         else
-          @announce "Failed to #{name}, please try again", FAILED
-          throw err
+          @init()
 
-  configureWatcher: ->
+    .catch (err) -> console.error err
+
+  configureWatcher: (session, cb)->
+    new Promise (resolve, reject) =>
+      @kiteHelper.run
+        command : "mkdir -p #{logger}/#{session}"
+      , (err)=>
+        unless err
+          watcher = new FSWatcher
+            path : "#{logger}/#{session}"
+            recursive : no
+            vmName: @kiteHelper.getVm().hostnameAlias
+          watcher.fileAdded = (change)=>
+            {name} = change.file
+            [percentage, status] = name.split '-'
+            @announce status, WORKING, percentage if percentage? and status?
+
+          watcher.watch()
+          resolve watcher
+        else
+          reject err
+
+  watcherDirectory: ->
     @kiteHelper.run
-      command : "mkdir -p #{logger}"
-    , (err)=>
-      unless err
-        @watcher = new FSWatcher
-          path : logger
-          recursive : yes
-        @watcher.fileAdded = (change)=>
-          {name} = change.file
-          [percentage, status] = name.split '-'
-          @announce status, WORKING, percentage if percentage? and status?
-      else
-        console.error err
+        command : "mkdir -p #{logger}/"
 
   updateState: (state)->
     @lastState = @state

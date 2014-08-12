@@ -8,36 +8,29 @@
     margin: 50px auto 20px auto;
     overflow: visible;
 
-    .progressbar-container {
-      height: 40px;
-      margin: 10px 0 0 0;
-      height: 30px;
-      border: none;
-      .border-radius(3px);
+    .progress-container {
+      position: relative;
+      width: 100%;
 
-      & > .dark-label {
-        font-size: 14px;
-        top: 8px;
-        left: 8px;
-        text-align: left;
-      }
-
-      span,
-      .bar span {
-        text-shadow: none !important;
+      .title {
+        padding: 10px 10px 10px 0;
+        border-bottom: solid 2px darken(#ededed, 10%);
       }
 
       .bar {
-        background:#1AAF5D;
-        border-radius:0;
+        position: absolute;
+        width: 0%;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background: #1AAF5D;
+        .transition(all)
+      }
 
-        & > .light-label {
-          font-size: 14px;
-          top: 8px;
-          left: 8px;
-          text-align: left;
-          text-decoration: none;
-        }
+      .spinner {
+        position: absolute;
+        top: 8px;
+        right: 0;
       }
     }
 
@@ -80,6 +73,7 @@
       font-size: 16px;
       line-height: 1.7em;
       color: #555;
+      margin-top: 30px;
 
       p {
         padding: 10px 0;

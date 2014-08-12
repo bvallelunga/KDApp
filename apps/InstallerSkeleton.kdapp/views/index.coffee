@@ -16,9 +16,33 @@ class {{ appCap }}MainView extends KDView
       attributes    :
         src         : logo
 
-    @container.addSubView @progress = new KDProgressBarView
-      initial       : 100
-      title         : "Checking VM State..."
+    @container.addSubView @progress = new KDCustomHTMLView
+      tagName       : 'div'
+      cssClass      : 'progress-container'
+
+    @progress.updateBar = (percentage, unit, status)->
+      if percentage is 100
+        @loader.hide()
+      else
+        @loader.show()
+
+      @title.updatePartial(status)
+      @bar.setWidth(percentage, unit)
+
+    @progress.addSubView @progress.title = new KDCustomHTMLView
+      tagName       : 'div'
+      cssClass      : 'title'
+      partial       : 'Checking VM State...'
+
+    @progress.addSubView @progress.bar = new KDCustomHTMLView
+      tagName       : 'div'
+      cssClass      : 'bar'
+
+    @progress.addSubView @progress.loader = new KDLoaderView
+      showLoader    : yes
+      size          :
+        width       : 20
+      cssClass      : "spinner"
 
     @container.addSubView @link = new KDCustomHTMLView
       cssClass : 'hidden running-link'
@@ -46,25 +70,16 @@ class {{ appCap }}MainView extends KDView
     @buttonContainer.addSubView @installButton = new KDButtonView
       title         : "Install #{appName}"
       cssClass      : 'button green solid hidden'
-      loader        :
-          color     : "#FFFFFF"
-          diameter  : 12
       callback      : => @commitCommand INSTALL
 
     @buttonContainer.addSubView @reinstallButton = new KDButtonView
       title         : "Reinstall"
       cssClass      : 'button solid hidden'
-      loader        :
-          color     : "#FFFFFF"
-          diameter  : 12
       callback      : => @commitCommand REINSTALL
 
     @buttonContainer.addSubView @uninstallButton = new KDButtonView
       title         : "Uninstall"
       cssClass      : 'button red solid hidden'
-      loader        :
-          color     : "#FFFFFF"
-          diameter  : 12
       callback      : => @commitCommand UNINSTALL
 
     @container.addSubView new KDCustomHTMLView
@@ -77,24 +92,26 @@ class {{ appCap }}MainView extends KDView
 
   statusUpdate: (message, percentage)->
     percentage ?= 100
-    @link.hide()
 
     if percentage is 100
       if @Installer.state in [NOT_INSTALLED, INSTALLED, FAILED]
-        element.hide().hideLoader() for element in [
+        element.hide() for element in [
           @installButton, @reinstallButton, @uninstallButton
         ]
 
     switch @Installer.state
       when NOT_INSTALLED
+        @link.hide()
         @installButton.show()
         @updateProgress message, percentage
       when INSTALLED
+        @link.show()
         @reinstallButton.show()
         @uninstallButton.show()
         @link.setSession()
         @updateProgress message, percentage
       when WORKING
+        @link.hide()
         @Installer.state = @Installer.lastState
         @updateProgress message, percentage
       when FAILED
