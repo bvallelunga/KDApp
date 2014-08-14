@@ -15,10 +15,54 @@
         transition: @arguments;
 }
 
+// Transform
+@transform: translate3d(0, 0, 0);
+.transform(@transform: @transform) {
+    -webkit-transform: @transform;
+    -moz-transform: @transform;
+    -ms-transform: @transform;
+    -o-transform: @transform;
+    transform: @transform;
+}
+
 // Border-radius
 @border-radius: 5px;
 .border-radius(@radius: @border-radius) {
     -webkit-border-radius: @radius;
     -moz-border-radius: @radius;
     border-radius: @radius;
+}
+
+
+// Box sizing
+.box-sizing(@box-sizing) {
+    -webkit-box-sizing: @box-sizing;
+    -moz-box-sizing: @box-sizing;
+    box-sizing: @box-sizing;
+}
+
+// Clearfix
+.clearfix() {
+    overflow: hidden;
+    zoom: 1;
+}
+
+
+// Floats
+.float(@side: left) {
+    display: inline;
+    float: @side;
+}
+
+.float-left() {
+    .float(left);
+}
+
+.float-right() {
+    .float(right);
+}
+
+.reset-float(@display: block) {
+    float: none;
+    display: @display;
 }

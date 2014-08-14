@@ -15,6 +15,7 @@
       "app": {
         "files": [
           "./config.coffee",
+          "./views/selectVm.coffee",
           "./controllers/kiteHelper.coffee",
           "./controllers/installer.coffee",
           "./views/index.coffee",
@@ -28,6 +29,7 @@
     "less": [
       "./less/mixins.less",
       "./less/modal.less",
+      "./less/dropdown.less",
       "./less/style.less"
     ]
   },

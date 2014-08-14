@@ -5,34 +5,52 @@ class {{ appCap }}InstallerController extends KDController
     { {{ appLower }}InstallerController } = KD.singletons
     return {{ appLower }}InstallerController if {{ appLower }}InstallerController
 
-    super options, data
-
-    @kiteHelper = new KiteHelper
-    @kiteHelper.ready @bound "watcherDirectory"
+    @kiteHelper = options.kiteHelper
     @registerSingleton "{{ appLower }}InstallerController", this, yes
+    super options, data
 
   announce:(message, state, percentage)->
     @updateState state if state?
     @emit "status-update", message, percentage
 
-  init: ->
-    @kiteHelper.getKite().then (kite)=>
-      kite.fsExists(path: installChecker)
-        .then (state)=>
-          unless state
-            @announce "#{appName} not installed", NOT_INSTALLED
-          else
-            @announce "#{appName} is installed", INSTALLED
-        .catch (err)=>
-            @announce "Failed to see if #{appName} is installed", FAILED
-            throw err
+  error: (err, override)->
+    message = err.details?.message or err.message
+    state = FAILED
 
-  command: (command, password, data)->
+    switch message
+      when "Permissiond denied. Wrong password"
+        message = "Your password was incorrect, please try again"
+        state = WRONG_PASSWORD
+      when "CPU limit reached"
+        message = "To use another vm with your plan, please turn off one of your vms"
+        state = ABORT
+      else
+        message = override
+
+    console.log err
+    @announce message, state
+
+  init: ->
+    @announce "Checking your vm's status...", WORKING, 0
+    @kiteHelper.getKite().then (kite)=>
+      @watcherDirectory()
+
+      kite.fsExists(path: installChecker).then (state)=>
+        unless state
+          @announce "#{appName} not installed", NOT_INSTALLED
+        else
+          @announce "#{appName} is installed", INSTALLED
+      .catch (err)=>
+          @error err
+    .catch (err)=>
+      @error err
+
+  command: (command, password, retry)->
     switch command
       when INSTALL then name = "install"
       when REINSTALL then name = "reinstall"
       when UNINSTALL then name = "uninstall"
-      else return console.error "Command not registered."
+      else return @error message: "Command not registered."
 
     @lastCommand = command
     @announce "#{@namify name}ing #{appName}...", null, 0
@@ -45,16 +63,16 @@ class {{ appCap }}InstallerController extends KDController
       , (err, res)=>
         watcher.stopWatching()
 
-        if err? or res.exitStatus is not 0
-          if err.details?.message is "Permissiond denied. Wrong password"
-            @announce "Your password was incorrect, please try again", WRONG_PASSWORD
-          else
-            @announce "Failed to #{name}, please try again", FAILED
-            console.error err
+        # Usually script have some output. If no output, retry command
+        if not retry? and not err? and not res.stdout and not res.stderr
+          return @command @lastCommand, password, true
+        else if err? or res.exitStatus != 0
+          @error err or message: res.stderr, "Failed to #{name} #{appName}, please contact support if the issue continues"
         else
           @init()
 
-    .catch (err) -> console.error err
+    .catch (err) =>
+      @error err
 
   configureWatcher: (session, cb)->
     new Promise (resolve, reject) =>
@@ -65,7 +83,7 @@ class {{ appCap }}InstallerController extends KDController
           watcher = new FSWatcher
             path : "#{logger}/#{session}"
             recursive : no
-            vmName: @kiteHelper.getVm().hostnameAlias
+            vmName: @kiteHelper.getVm()
           watcher.fileAdded = (change)=>
             {name} = change.file
             [percentage, status] = name.split '-'
@@ -79,14 +97,15 @@ class {{ appCap }}InstallerController extends KDController
   watcherDirectory: ->
     @kiteHelper.run
         command : "mkdir -p #{logger}/"
+    , (err)=>
+      @error err if err?
 
   updateState: (state)->
     @lastState = @state
     @state = state
 
   namify: (name)->
-    (name.split(/\s+/).map (word) ->
-      word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
+    return (name.split(/\s+/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
 
   isConfigured: ->
     new Promise (resolve, reject)=>
@@ -95,5 +114,5 @@ class {{ appCap }}InstallerController extends KDController
 
       @kiteHelper.getKite().then (kite)=>
         kite.fsExists(path: configuredChecker)
-          .then resolve
-          .catch reject
+          .then(resolve)
+          .catch(reject)

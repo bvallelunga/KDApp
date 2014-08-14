@@ -47,8 +47,9 @@ class Create
       when "installer"
         skelAppName = "InstallerSkeleton"
         additionalFiles = [
-          "config.coffee", "views/index.coffee",
-          "less/style.less", "controllers/installer.coffee"
+          "config.coffee", "views/index.coffee", "views/selectVm.coffee",
+          "less/style.less", "less/dropdown.less",
+          "controllers/installer.coffee"
         ]
 
       else return console.log """

@@ -2,14 +2,32 @@
   p {
     margin: 10px 0;
   }
-  
+
   ol {
     list-style-type: decimal;
     padding-left: 40px;
-    
+
     li {
       display: list-item;
       text-align: -webkit-match-parent;
+    }
+  }
+
+  .item {
+    padding: 10px;
+    border-bottom: solid 1px #ededed;
+    cursor: pointer;
+
+    &:last-child {
+      border: none;
+    }
+
+    &:hover {
+      color: darken(rgb(26, 175, 93), 10%);
+
+      &:active {
+        color: darken(rgb(26, 175, 93), 15%);
+      }
     }
   }
 }

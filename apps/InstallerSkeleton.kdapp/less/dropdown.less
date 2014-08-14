@@ -1,0 +1,115 @@
+.{{ appCap }}-dropdown {
+  position: absolute;
+  top: 25px;
+  right: 15px;
+  width: initial;
+  height: initial;
+  overflow: visible;
+
+  &.disabled {
+    opacity: 0.5;
+  }
+
+  &:not(.disabled) {
+    .header&:hover {
+      border-color: RGBA(87, 161, 230, 0.8);
+
+      &:active {
+        border-color: RGBA(87, 161, 230, 1);
+      }
+    }
+
+    &.active {
+      .header {
+        border-color: RGBA(87, 161, 230, 1);
+        .border-radius(3px 3px 0 0);
+
+        .arrow {
+          .transform(rotate(-180deg));
+        }
+      }
+
+      .selection {
+        display: block;
+
+        .item:hover {
+          background: RGBA(87, 161, 230, 0.1);
+
+          &:active {
+            background: RGBA(87, 161, 230, 0.15);
+          }
+        }
+      }
+    }
+  }
+
+  .header {
+    position: relative;
+    cursor: pointer;
+    border: solid 2px rgba(0, 0, 0, 0.1);
+    background: lighten(#ededed, 5%);
+    .transition(all);
+    .border-radius(3px);
+    .clearfix();
+
+    .selected {
+      padding: 10px 30px 10px 10px;
+      .float-left();
+    }
+
+    .arrow {
+      position: absolute;
+      top: calc(~"50% - 4px");
+      right: 10px;
+      width: 0;
+    	height: 0;
+    	border-left: 7px solid transparent;
+    	border-right: 7px solid transparent;
+    	border-top: 7px solid rgba(0, 0, 0, 0.075);
+    	.border-radius(4px);
+    	.transition(all);
+    }
+  }
+
+  .selection {
+    display: none;
+    border: solid 2px rgba(0, 0, 0, 0.1);
+    border-top: none;
+    .border-radius(0 0 3px 3px);
+    .transition(all);
+
+    .item {
+      position: relative;
+      cursor: pointer;
+      padding: 8px 10px 8px 25px;
+      border-bottom: solid 1px rgba(0, 0, 0, 0.05);
+      .transition(all);
+
+      &:nth-child(odd) {
+        background: #FCFCFC;
+      }
+
+      &:last-child {
+        border: none;
+      }
+
+      &.running .bubble {
+        background: #1AAF5D;
+      }
+
+      &.stopped .bubble {
+        background: #cccccc;
+      }
+
+      .bubble {
+        position: absolute;
+        top: calc(~"50% - 3px");
+        left: 8px;
+        width: 8px;
+        height: 8px;
+        .border-radius(50%);
+        .transition(all);
+      }
+    }
+  }
+}

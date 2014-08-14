@@ -1,12 +1,26 @@
 class {{ appCap }}MainView extends KDView
 
   constructor:(options = {}, data)->
+    @kiteHelper = new KiteHelper
+
+    @installer = new {{ appCap }}InstallerController
+        kiteHelper: @kiteHelper
+
+    @selectVm = new {{ appCap }}SelectVm
+        kiteHelper: @kiteHelper
+        installer : @installer
+
     options.cssClass = "#{appCSS} main-view"
-    @Installer = new {{ appCap }}InstallerController
     super options, data
 
   viewAppended: ->
-    @addSubView @container = new KDCustomHTMLView
+    @addSubView @wrapper = new KDCustomHTMLView
+      tagName       : 'div'
+      cssClass      : 'wrapper'
+
+    @wrapper.addSubView @selectVm
+
+    @wrapper.addSubView @container = new KDCustomHTMLView
       tagName       : 'div'
       cssClass      : 'container'
 
@@ -20,8 +34,8 @@ class {{ appCap }}MainView extends KDView
       tagName       : 'div'
       cssClass      : 'progress-container'
 
-    @progress.updateBar = (percentage, unit, status)->
-      if percentage is 100
+    @progress.updateBar = (percentage, unit, status, override)->
+      if percentage is 100 and not override
         @loader.hide()
       else
         @loader.show()
@@ -48,20 +62,21 @@ class {{ appCap }}MainView extends KDView
       cssClass : 'hidden running-link'
 
     @link.setSession = =>
-      @Installer.isConfigured()
+      @installer.isConfigured()
         .then (configured)=>
           url = unless configured then configureURL else launchURL
 
           if url
+            url = "http://#{@kiteHelper.getVm()}#{url}"
+
             @link.updatePartial """
               Click here to launch #{appName}:
               <a target='_blank' href='#{url}'>#{url}</a>
             """
             @link.show()
         .catch (error)=>
-          @link.updatePartial "Failed to check if #{appName} is configured."
-          @link.show()
           console.error error
+          @updateProgress "Failed to check if #{appName} is configured."
 
     @container.addSubView @buttonContainer = new KDCustomHTMLView
       tagName       : 'div'
@@ -87,40 +102,44 @@ class {{ appCap }}MainView extends KDView
       partial  : description
 
     KD.utils.defer =>
-      @Installer.on "status-update", @bound "statusUpdate"
-      @Installer.init()
+      @installer.on "status-update", @bound "statusUpdate"
+      @installer.init()
 
   statusUpdate: (message, percentage)->
     percentage ?= 100
 
-    if percentage is 100
-      if @Installer.state in [NOT_INSTALLED, INSTALLED, FAILED]
-        element.hide() for element in [
-          @installButton, @reinstallButton, @uninstallButton
-        ]
+    element.hide() for element in [
+      @installButton, @reinstallButton, @uninstallButton, @link
+    ]
 
-    switch @Installer.state
+    switch @installer.state
       when NOT_INSTALLED
-        @link.hide()
-        @installButton.show()
+        if percentage is 100
+          @installButton.show()
+          @selectVm.disabled false
         @updateProgress message, percentage
       when INSTALLED
-        @link.show()
-        @reinstallButton.show()
-        @uninstallButton.show()
-        @link.setSession()
+        if percentage is 100
+          @reinstallButton.show()
+          @uninstallButton.show()
+          @link.setSession()
+          @selectVm.disabled false
         @updateProgress message, percentage
       when WORKING
-        @link.hide()
-        @Installer.state = @Installer.lastState
-        @updateProgress message, percentage
+        @selectVm.disabled true
+        @installer.state = @installer.lastState
+        @updateProgress message, percentage, true
       when FAILED
-        @Installer.state = @Installer.lastState
+        @installer.state = @installer.lastState
         @statusUpdate message, percentage
+      when ABORT
+        @selectVm.turnOffVmModal()
+        @updateProgress message, percentage
       when WRONG_PASSWORD
-        @Installer.state = @Installer.lastState
+        @installer.state = @installer.lastState
         @passwordModal yes, (password)=>
-          @Installer.command @Installer.lastCommand, password if password?
+          if password?
+            @installer.command @installer.lastCommand, password
       else
         @updateProgress message, percentage
 
@@ -134,9 +153,9 @@ class {{ appCap }}MainView extends KDView
     if scripts[name].sudo
       @passwordModal no, (password)=>
         if password?
-          @Installer.command command, password
+          @installer.command command, password
     else
-      @Installer.command command
+      @installer.command command
 
   passwordModal: (error, cb)->
     unless @modal
@@ -179,5 +198,6 @@ class {{ appCap }}MainView extends KDView
                     messages    :
                       required  : "password is required!"
 
-  updateProgress: (status, percentage)->
-    @progress.updateBar percentage, '%', status
+  updateProgress: (status, percentage, override)->
+    percentage ?= 100
+    @progress.updateBar percentage, '%', status, override
