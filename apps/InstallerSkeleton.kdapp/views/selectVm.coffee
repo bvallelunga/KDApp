@@ -81,7 +81,10 @@ class {{ appCap }}SelectVm extends KDView
           container.addSubView vmItem = new KDCustomHTMLView
             tagName       : 'div'
             cssClass      : "item"
-            partial       : vm.hostnameAlias
+            partial       : """
+              <div class="bubble"></div>
+              #{vm.hostnameAlias}
+            """
             click         : (event)=>
               @turnOffVm vm.hostnameAlias
               @removeModal()
