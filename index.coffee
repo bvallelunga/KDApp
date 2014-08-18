@@ -43,6 +43,15 @@ program
   .action lib.update.bind lib
 
 program
+  .command 'remove'
+  .description 'Remove kdapp from vm'
+
+program
+  .command 'remove [type]'
+  .description 'Remove kdapp from vm and <github>'
+  .action lib.remove.bind lib
+
+program
   .command 'help'
   .description 'Output help information'
   .action lib.help.bind lib

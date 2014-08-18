@@ -10,6 +10,7 @@ Coffee    = require './coffee'
 Less      = require './less'
 Preview   = require './preview'
 Create    = require './create'
+Remove    = require './remove'
 
 class Lib
   constructor: (config, program)->
@@ -100,6 +101,10 @@ class Lib
       command = "sudo npm install -g  git+https://github.com/bvallelunga/KDApp.git"
 
     Exec.exec command
+
+  remove: (type)->
+    remove = new Remove @, (type == "github")
+    remove.app()
 
   help: ->
     @program.help()

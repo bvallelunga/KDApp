@@ -47,6 +47,8 @@ Commands:
   preview [options]      Preview the application on a local web server
   publish [env]          Publish to <sandbox> or <store> enviroment
   update                 Update KDApp CLI
+  remove                 Remove kdapp from vm
+  remove [type]          Remove kdapp from vm and <github>
   help                   Output help information
 
 Options:
