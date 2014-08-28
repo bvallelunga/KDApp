@@ -31,6 +31,8 @@ module.exports = (lib, cb)->
           next null, css + fs.readFileSync file, 'utf-8'
         else
           next "The required file not found: #{file}"
+      else
+        next "This file is not a less file: #{file}"
     , (err, less)->
       if err
         return cb err
@@ -45,3 +47,5 @@ module.exports = (lib, cb)->
           cb()
       catch error
         return cb "LESS Error: #{error.message}"
+  else
+    return cb()
