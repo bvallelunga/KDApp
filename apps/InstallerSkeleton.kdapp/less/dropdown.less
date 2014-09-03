@@ -1,7 +1,7 @@
 .{{ appCap }}-dropdown {
   position: absolute;
-  top: 25px;
-  right: 15px;
+  top: 50px;
+  left: calc(~"50% + 320px");
   width: initial;
   height: initial;
   overflow: visible;
@@ -10,69 +10,17 @@
     opacity: 0.5;
   }
 
-  &:not(.disabled) {
-    .header&:hover {
-      border-color: RGBA(87, 161, 230, 0.8);
-
-      &:active {
-        border-color: RGBA(87, 161, 230, 1);
-      }
-    }
-
-    &.active {
-      .header {
-        border-color: RGBA(87, 161, 230, 1);
-        .border-radius(3px 3px 0 0);
-
-        .arrow {
-          .transform(rotate(-180deg));
-        }
-      }
-
-      .selection {
-        display: block;
-
-        .item:hover {
-          background: RGBA(87, 161, 230, 0.1);
-
-          &:active {
-            background: RGBA(87, 161, 230, 0.15);
-          }
-        }
-      }
-    }
-  }
-
   .header {
-    position: relative;
-    cursor: pointer;
+    color: #808080;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
     border: solid 2px rgba(0, 0, 0, 0.1);
     background: lighten(#ededed, 5%);
-    .transition(all);
-    .border-radius(3px);
-    .clearfix();
-
-    .selected {
-      padding: 10px 30px 10px 10px;
-      .float-left();
-    }
-
-    .arrow {
-      position: absolute;
-      top: calc(~"50% - 4px");
-      right: 10px;
-      width: 0;
-    	height: 0;
-    	border-left: 7px solid transparent;
-    	border-right: 7px solid transparent;
-    	border-top: 7px solid rgba(0, 0, 0, 0.075);
-    	.border-radius(4px);
-    	.transition(all);
-    }
+    .border-radius(3px 3px 0 0);
   }
 
   .selection {
-    display: none;
     border: solid 2px rgba(0, 0, 0, 0.1);
     border-top: none;
     .border-radius(0 0 3px 3px);
@@ -89,8 +37,17 @@
         background: #FCFCFC;
       }
 
+
       &:last-child {
         border: none;
+      }
+
+      &:hover {
+        background: RGBA(87, 161, 230, 0.1);
+
+        &:active {
+          background: RGBA(87, 161, 230, 0.15);
+        }
       }
 
       &.running .bubble {
@@ -99,6 +56,15 @@
 
       &.stopped .bubble {
         background: #cccccc;
+      }
+
+      &.active {
+        background: #2C97DD;
+        color: #fff;
+
+        .bubble {
+          background: rgba(255, 255, 255, 0.6);
+        }
       }
 
       .bubble {
