@@ -40,7 +40,7 @@ module.exports = (lib, cb)->
       try
         parser.parse less, (err, tree)->
           if err
-            return cb "Failed to compile LESS"
+            return cb "LESS Error: #{err.message}"
 
           compiledCss = tree.toCSS()
           fs.writeFileSync path.normalize(path.join appPath, "./resources/style.css"), compiledCss
